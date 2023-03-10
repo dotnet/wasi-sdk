@@ -36,7 +36,7 @@
     <RootRepoDir>$(ProjectDir)\..\..\</RootRepoDir>
     <ProjectDir Condition="'$(__ProjectDir)'==''">$(MSBuildThisFileDirectory)</ProjectDir>
 
-    <BaseIntermediateOutputPath>$(RootRepoDir)artifacts\obj\llvm\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>$(RootRepoDir)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 
     <SourceDir>$(__SourceDir)\</SourceDir>
     <SourceDir Condition="'$(__SourceDir)'==''">$(ProjectDir)src\</SourceDir>
@@ -45,19 +45,13 @@
     <RootBinDir Condition="'$(__RootBinDir)'==''">$(RootRepoDir)artifacts\</RootBinDir>
 
     <BinDir>$(__BinDir)\</BinDir>
-    <BinDir Condition="'$(__BinDir)'==''">$(RootBinDir)bin\llvm\$(PlatformConfigPathPart)\</BinDir>
+    <BinDir Condition="'$(__BinDir)'==''">$(RootBinDir)bin\$(PlatformConfigPathPart)\</BinDir>
 
-    <_LLVMSourceDir Condition="'$(_LLVMSourceDir)'==''">$(MSBuildThisFileDirectory)/llvm</_LLVMSourceDir>
-    <_LLVMBuildDir Condition="'$(_LLVMBuildDir)'==''">$(MSBuildThisFileDirectory)/artifacts/obj/BuildRoot-$(TargetArchitecture)</_LLVMBuildDir>
-    <_LLVMInstallDir Condition="'$(_LLVMInstallDir)'==''">$(MSBuildThisFileDirectory)/artifacts/obj/InstallRoot-$(TargetArchitecture)</_LLVMInstallDir>
+    <MonoLLVMDir>$(RootRepoDir)artifacts\obj\$(PlatformConfigPathPart)\llvm</MonoLLVMDir>
 
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Central place to set the versions of all nuget packages produced in the repo -->
-    <PackageVersion Condition="'$(PackageVersion)' == '' AND !Exists('$(_LLVMBuildDir)\version.txt')">1.0.0</PackageVersion>
-    <PackageVersion Condition="'$(PackageVersion)' == '' AND Exists('$(_LLVMBuildDir)\version.txt')">$([System.IO.File]::ReadAllText('$(_LLVMBuildDir)\version.txt'))</PackageVersion>
-
     <!-- Set the boolean below to true to generate packages with stabilized versions -->
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
     <StableVersion Condition="'$(StabilizePackageVersion)' == 'true' and '$(StableVersion)' == ''">$(PackageVersion)</StableVersion>
