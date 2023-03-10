@@ -1,16 +1,15 @@
-<Project>
-  <Import Project="Directory.Build.props" />
-  <Import Project="Directory.Build.targets" />
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="runtime.$(BuildOS)-$(BuildArch).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport"
+    <PackageReference Include="runtime.$(BuildOS.ToLowerInvariant())-$(BuildArch.ToLowerInvariant()).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport"
                       Version="$(runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmTransportVersion)"
                       PackageArch="$(BuildArch)" />
   </ItemGroup>
 
   <Target Name="CopyLLVMToTree" AfterTargets="Restore">
-    <Exec Command="echo copyllvmtotreetarget"
-          IgnoreStandardErrorWarningFormat="true" />
     <ItemGroup>
       <LLVMFiles Include="$(NuGetPackageRoot)\$([System.String]::Copy(%(PackageReference.Identity)).ToLowerInvariant())\%(PackageReference.Version)\tools\$(BuildOS)-%(PackageReference.PackageArch)\**"
                  FileArch="%(PackageReference.PackageArch)" />
@@ -19,11 +18,7 @@
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
   </Target>
-  <Target Name="Build" AfterTargets="CopyLLVMToTree">
-    <Exec Command="echo buildtarget"
-          IgnoreStandardErrorWarningFormat="true" />
-  </Target>
-  <Target Name="Restore" />
+  <Target Name="Build" AfterTargets="CopyLLVMToTree" />
   <Target Name="Test" />
   <Target Name="Pack" DependsOnTargets="Build">
     <MSBuild Projects="eng/nuget/packages.builds" Targets="Build" />
