@@ -26,7 +26,7 @@
     <PackageReference Include="@(_PackageReferenceDeduplicated->Distinct())" />
   </ItemGroup>
 
-  <Target Name="CopyLLVMToTree" AfterTargets="Restore">
+  <Target Name="CopyLLVMToTree" BeforeTargets="Build">
     <ItemGroup>
       <LLVMFiles Include="$(NuGetPackageRoot)\$([System.String]::Copy(%(PackageReference.Identity)).ToLowerInvariant())\%(PackageReference.Version)\tools\$(MonoLLVMHostOS)-%(PackageReference.PackageArch)\**"
                  FileArch="%(PackageReference.PackageArch)"
@@ -35,10 +35,53 @@
     <Copy SourceFiles="@(LLVMFiles)" DestinationFolder="$(MonoLLVMDir)\%(LLVMFiles.FileArch)\%(RecursiveDir)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
-    <Message Importance="High" Text="** Building WASI SDK with Clang:  $(MonoLLVMDir)\$(BuildArchitecture)" />
-    <Message Importance="High" Text="** Packaging WASI SDK with Clang: $(MonoLLVMDir)\$(TargetArchitecture)" />
+    <Message Importance="High" Text="** Building WASI SDK with Clang:  $(BuildLLVM)" />
+    <Message Importance="High" Text="** Packaging WASI SDK with Clang: $(PackageLLVM)" />
     <Message Importance="High" Text="** (These values should differ for cross-compilation)" />
   </Target>
+
+  <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree">
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="make -C src/wasi-libc CC=$(BuildLLVM)/bin/clang AR=$(BuildLLVM)/bin/llvm-ar NM=$(BuildLLVM)/bin/llvm-nm SYSROOT=$(BuildLLVM)/share/wasi-sysroot OBJDIR=$(BaseIntermediateOutputPath)/wasi-libc"
+      IgnoreStandardErrorWarningFormat="true" />
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="make -C src/wasi-libc CC=$(BuildLLVM)/bin/clang AR=$(BuildLLVM)/bin/llvm-ar NM=$(BuildLLVM)/bin/llvm-nm SYSROOT=$(BuildLLVM)/share/wasi-sysroot OBJDIR=$(BaseIntermediateOutputPath)/wasi-libc THREAD_MODEL=posix"
+      IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+  <Target Name="BuildCompilerRt" AfterTargets="BuildLibc">
+    <!-- 
+      build/compiler-rt.BUILT: build/llvm.BUILT build/wasi-libc.BUILT
+	# Do the build, and install it.
+	mkdir -p build/compiler-rt
+	cd build/compiler-rt && cmake -G Ninja \
+		-DCMAKE_SYSROOT=$(BUILD_PREFIX)/share/wasi-sysroot \
+		-DCMAKE_C_COMPILER_WORKS=ON \
+		-DCMAKE_CXX_COMPILER_WORKS=ON \
+		-DCMAKE_AR=$(BUILD_PREFIX)/bin/ar \
+		-DCMAKE_MODULE_PATH=$(ROOT_DIR)/cmake \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DCMAKE_TOOLCHAIN_FILE=$(ROOT_DIR)/wasi-sdk.cmake \
+		-DCOMPILER_RT_BAREMETAL_BUILD=On \
+		-DCOMPILER_RT_BUILD_XRAY=OFF \
+		-DCOMPILER_RT_INCLUDE_TESTS=OFF \
+		-DCOMPILER_RT_HAS_FPIC_FLAG=OFF \
+		-DCOMPILER_RT_ENABLE_IOS=OFF \
+		-DCOMPILER_RT_DEFAULT_TARGET_ONLY=On \
+		-DWASI_SDK_PREFIX=$(BUILD_PREFIX) \
+		-DCMAKE_C_FLAGS="$(DEBUG_PREFIX_MAP)" \
+		-DLLVM_CONFIG_PATH=$(ROOT_DIR)/build/llvm/bin/llvm-config \
+		-DCOMPILER_RT_OS_DIR=wasi \
+		-DCMAKE_INSTALL_PREFIX=$(PREFIX)/lib/clang/$(CLANG_VERSION)/ \
+		-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+		$(LLVM_PROJ_DIR)/compiler-rt/lib/builtins
+	DESTDIR=$(DESTDIR) ninja $(NINJA_FLAGS) -C build/compiler-rt install
+	# Install clang-provided headers.
+	cp -R $(ROOT_DIR)/build/llvm/lib/clang $(BUILD_PREFIX)/lib/
+	touch build/compiler-rt.BUILT
+    -->
+  </Target>
+
   <Target Name="Build" AfterTargets="CopyLLVMToTree" />
   <Target Name="Test" />
   <Target Name="Pack" DependsOnTargets="Build">

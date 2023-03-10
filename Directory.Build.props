@@ -18,5 +18,14 @@
     <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(TargetsMobile)' == 'true'">x64</TargetArchitecture>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
     <Platform Condition="'$(Platform)' == '' and '$(InferPlatformFromTargetArchitecture)' == 'true'">$(TargetArchitecture)</Platform>
+
+    <BuildLLVM>$(MonoLLVMDir)\$(BuildArchitecture)</BuildLLVM>
+    <PackageLLVM>$(MonoLLVMDir)\$(TargetArchitecture)</PackageLLVM>
+
+    <SysrootDir>$(BaseIntermediateOutputPath)/sysroot</SysrootDir>
+
+    <LibcBuildDir>$(BaseIntermediateOutputPath)/wasi-libc</LibcBuildDir>
+    <CompilerRtDir>$(BaseIntermediateOutputPath)/compiler-rt</CompilerRtDir>
+    <LibCxxBuildDir>$(BaseIntermediateOutputPath)/libcxx</LibCxxBuildDir>
   </PropertyGroup>
 </Project>
