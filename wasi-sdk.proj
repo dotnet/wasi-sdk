@@ -1,0 +1,11 @@
+<Project>
+  <Import Project="Directory.Build.props" />
+  <Import Project="Directory.Build.targets" />
+
+  <Target Name="Build" />
+  <Target Name="Restore" />
+  <Target Name="Test" />
+  <Target Name="Pack" DependsOnTargets="Build">
+    <MSBuild Projects="eng/nuget/packages.builds" Targets="Build" />
+  </Target>
+</Project>
