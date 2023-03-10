@@ -3,20 +3,41 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <MonoLLVMHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">linux</MonoLLVMHostOS>
+    <MonoLLVMHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">osx</MonoLLVMHostOS>
+    <MonoLLVMHostOS Condition="'$(OS)' == 'Windows_NT'">win</MonoLLVMHostOS>
+    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'linux'">$(runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmTransportVersion)</MonoLLVMClangVersion>
+    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'win'">$(runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmTransportVersion)</MonoLLVMClangVersion>
+    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'osx'">$(runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmTransportVersion)</MonoLLVMClangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="runtime.$(BuildOS.ToLowerInvariant())-$(BuildArch.ToLowerInvariant()).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport"
-                      Version="$(runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmTransportVersion)"
-                      PackageArch="$(BuildArch)" />
+    <PackageReference Include="runtime.$(MonoLLVMHostOS)-$(TargetArchitecture).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport"
+                      Version="$(MonoLLVMClangVersion)"
+                      PackageArch="$(TargetArchitecture)"
+                      Condition="'$(TargetArchitecture)' != ''" />
+    <PackageReference Include="runtime.$(MonoLLVMHostOS)-$(BuildArchitecture).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport"
+                      Version="$(MonoLLVMClangVersion)"
+                      PackageArch="$(BuildArchitecture)"
+                      Condition="'$(BuildArchitecture)' != ''" />
+    <_PackageReferenceDeduplicated Include="@(PackageReference->Distinct())" />
+    <PackageReference Remove="@(PackageReference)" />
+    <PackageReference Include="@(_PackageReferenceDeduplicated->Distinct())" />
   </ItemGroup>
 
   <Target Name="CopyLLVMToTree" AfterTargets="Restore">
     <ItemGroup>
-      <LLVMFiles Include="$(NuGetPackageRoot)\$([System.String]::Copy(%(PackageReference.Identity)).ToLowerInvariant())\%(PackageReference.Version)\tools\$(BuildOS)-%(PackageReference.PackageArch)\**"
-                 FileArch="%(PackageReference.PackageArch)" />
+      <LLVMFiles Include="$(NuGetPackageRoot)\$([System.String]::Copy(%(PackageReference.Identity)).ToLowerInvariant())\%(PackageReference.Version)\tools\$(MonoLLVMHostOS)-%(PackageReference.PackageArch)\**"
+                 FileArch="%(PackageReference.PackageArch)"
+                 Condition="$([System.String]::Copy(%(PackageReference.Identity)).Contains('Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport')) == 'true'" />
     </ItemGroup>
     <Copy SourceFiles="@(LLVMFiles)" DestinationFolder="$(MonoLLVMDir)\%(LLVMFiles.FileArch)\%(RecursiveDir)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
+    <Message Importance="High" Text="** Building WASI SDK with Clang:  $(MonoLLVMDir)\$(BuildArchitecture)" />
+    <Message Importance="High" Text="** Packaging WASI SDK with Clang: $(MonoLLVMDir)\$(TargetArchitecture)" />
+    <Message Importance="High" Text="** (These values should differ for cross-compilation)" />
   </Target>
   <Target Name="Build" AfterTargets="CopyLLVMToTree" />
   <Target Name="Test" />
