@@ -27,5 +27,7 @@
     <LibcBuildDir>$(BaseIntermediateOutputPath)/wasi-libc</LibcBuildDir>
     <CompilerRtDir>$(BaseIntermediateOutputPath)/compiler-rt</CompilerRtDir>
     <LibCxxBuildDir>$(BaseIntermediateOutputPath)/libcxx</LibCxxBuildDir>
+
+    <WasiSdkVersion>19.0.0</WasiSdkVersion>
   </PropertyGroup>
 </Project>
