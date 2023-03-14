@@ -33,7 +33,7 @@
 
     <__ProjectDir Condition="'$(__ProjectDir)'==''">$(MSBuildThisFileDirectory)</__ProjectDir>
     <ProjectDir>$(__ProjectDir)\</ProjectDir>
-    <RootRepoDir>$(ProjectDir)\..\..\</RootRepoDir>
+    <RootRepoDir>$(ProjectDir)</RootRepoDir>
     <ProjectDir Condition="'$(__ProjectDir)'==''">$(MSBuildThisFileDirectory)</ProjectDir>
 
     <BaseIntermediateOutputPath>$(RootRepoDir)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
