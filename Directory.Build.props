@@ -22,6 +22,8 @@
     <BuildLLVM>$(MonoLLVMDir)\$(BuildArchitecture)</BuildLLVM>
     <PackageLLVM>$(MonoLLVMDir)\$(TargetArchitecture)</PackageLLVM>
 
+    <SourceLLVM>$(RootRepoDir)\src\llvm-project\</SourceLLVM>
+
     <SysrootDir>$(BaseIntermediateOutputPath)/sysroot</SysrootDir>
 
     <LibcBuildDir>$(BaseIntermediateOutputPath)/wasi-libc</LibcBuildDir>

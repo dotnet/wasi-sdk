@@ -78,36 +78,6 @@
   </Target>
 
   <Target Name="BuildCompilerRt" AfterTargets="BuildLibc">
-    <!-- 
-      build/compiler-rt.BUILT: build/llvm.BUILT build/wasi-libc.BUILT
-	# Do the build, and install it.
-	mkdir -p build/compiler-rt
-	cd build/compiler-rt && cmake -G Ninja \
-		-DCMAKE_SYSROOT=$(BUILD_PREFIX)/share/wasi-sysroot \
-		-DCMAKE_C_COMPILER_WORKS=ON \
-		-DCMAKE_CXX_COMPILER_WORKS=ON \
-		-DCMAKE_AR=$(BUILD_PREFIX)/bin/ar \
-		-DCMAKE_MODULE_PATH=$(ROOT_DIR)/cmake \
-		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DCMAKE_TOOLCHAIN_FILE=$(ROOT_DIR)/wasi-sdk.cmake \
-		-DCOMPILER_RT_BAREMETAL_BUILD=On \
-		-DCOMPILER_RT_BUILD_XRAY=OFF \
-		-DCOMPILER_RT_INCLUDE_TESTS=OFF \
-		-DCOMPILER_RT_HAS_FPIC_FLAG=OFF \
-		-DCOMPILER_RT_ENABLE_IOS=OFF \
-		-DCOMPILER_RT_DEFAULT_TARGET_ONLY=On \
-		-DWASI_SDK_PREFIX=$(BUILD_PREFIX) \
-		-DCMAKE_C_FLAGS="$(DEBUG_PREFIX_MAP)" \
-		-DLLVM_CONFIG_PATH=$(ROOT_DIR)/build/llvm/bin/llvm-config \
-		-DCOMPILER_RT_OS_DIR=wasi \
-		-DCMAKE_INSTALL_PREFIX=$(PREFIX)/lib/clang/$(CLANG_VERSION)/ \
-		-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-		$(LLVM_PROJ_DIR)/compiler-rt/lib/builtins
-	DESTDIR=$(DESTDIR) ninja $(NINJA_FLAGS) -C build/compiler-rt install
-	# Install clang-provided headers.
-	cp -R $(ROOT_DIR)/build/llvm/lib/clang $(BUILD_PREFIX)/lib/
-	touch build/compiler-rt.BUILT
-    -->
     <ItemGroup>
       <_CompilerRtBuildArgs Include="-DCMAKE_SYSROOT=$(SysrootDir)" />
       <_CompilerRtBuildArgs Include="-DCMAKE_C_COMPILER_WORKS:BOOL=ON" />
@@ -127,10 +97,66 @@
       <_CompilerRtBuildArgs Include="-DCMAKE_INSTALL_PREFIX=$(CompilerRtDir)/lib/clang/14.0.0/"/>
       <_CompilerRtBuildArgs Include="-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"/>
     </ItemGroup>
-    <Message Importance="High" Text="Running: $(_SetupEnvironment) cmake $(MSBuildThisFileDirectory)/src/llvm-project/compiler-rt/lib/builtins -G '$(CMakeGenerator)' @(_CompilerRtBuildArgs->'%(Identity)',' ')" />
+    <Message Importance="High" Text="Running: $(_SetupEnvironment) cmake $(SourceLLVM)/compiler-rt/lib/builtins -G '$(CMakeGenerator)' @(_CompilerRtBuildArgs->'%(Identity)',' ')" />
     <MakeDir Directories="$(CompilerRtDir)" Condition="!Exists('$(CompilerRtDir)')" />
     <Exec WorkingDirectory="$(CompilerRtDir)"
-      Command="$(_SetupEnvironment) cmake $(MSBuildThisFileDirectory)/src/llvm-project/compiler-rt/lib/builtins -G '$(CMakeGenerator)' @(_CompilerRtBuildArgs->'%(Identity)',' ')"
+      Command="$(_SetupEnvironment) cmake $(SourceLLVM)/compiler-rt/lib/builtins -G '$(CMakeGenerator)' @(_CompilerRtBuildArgs->'%(Identity)',' ')"
+      IgnoreStandardErrorWarningFormat="true" />
+    <Exec WorkingDirectory="$(CompilerRtDir)"
+      Command="$(_BuildCommand)"
+      IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+  <Target Name="BuildLibCxx" AfterTargets="BuildCompilerRt">
+    <ItemGroup>
+      <_LibCxxBuildArgs Include="-DCMAKE_C_COMPILER_WORKS:BOOL=ON" />
+      <_LibCxxBuildArgs Include="-DCMAKE_CXX_COMPILER_WORKS:BOOL=ON" />
+      <_LibCxxBuildArgs Include="-DCMAKE_MODULE_PATH=$(MSBuildThisFileDirectory)/cmake" />
+      <_LibCxxBuildArgs Include="-DCMAKE_TOOLCHAIN_FILE=$(MSBuildThisFileDirectory)/microsoft-wasi-sdk.cmake" />
+      <_LibCxxBuildArgs Include="-DCMAKE_STAGING_PREFIX=$(SysrootDir)" />
+      <_LibCxxBuildArgs Include="-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON" />
+      <_LibCxxBuildArgs Include="-DCXX_SUPPORTS_CXX11:BOOL=ON" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_ENABLE_THREADS:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_HAS_PTHREAD_API:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_HAS_EXTERNAL_THREAD_API:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_BUILD_EXTERNAL_THREAD_LIBRARY:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_HAS_WIN32_THREAD_API:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLLVM_COMPILER_CHECKED:BOOL=ON" />
+      <_LibCxxBuildArgs Include="-DCMAKE_BUILD_TYPE=RelWithDebugInfo" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_ENABLE_SHARED:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_ENABLE_EXCEPTIONS:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_ENABLE_FILESYSTEM:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_CXX_ABI=libcxxabi" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_CXX_ABI_INCLUDE_PATHS=$(SourceLLVM)/libcxxabi/include" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_HAS_MUSL_LIBC:BOOL=ON" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_ABI_VERSION=2" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_ENABLE_EXCEPTIONS:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_ENABLE_SHARED:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_SILENT_TERMINATE:BOOL=ON" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_ENABLE_THREADS:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_HAS_PTHREAD_API:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_HAS_EXTERNAL_THREAD_API:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_BUILD_EXTERNAL_THREAD_LIBRARY:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_HAS_WIN32_THREAD_API:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_ENABLE_PIC:BOOL=OFF" />
+      <_LibCxxBuildArgs Include="-DBUILD_LLVM_PREFIX=$(BuildLLVM)"/>
+      <_LibCxxBuildArgs Include="-DUNIX:BOOL=ON" />
+      <_LibCxxBuildArgs Include="--debug-trycompile" />
+      <_LibCxxBuildArgs Include="-DCMAKE_SYSROOT=$(SysrootDir)" />
+      <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(WasiSdkVersion)'"/>
+      <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(WasiSdkVersion)'"/>
+      <_LibCxxBuildArgs Include="-DLIBCXX_LIBDIR_SUFFIX=/wasm32-wasi" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_LIBDIR_SUFFIX=/wasm32-wasi" />
+      <_LibCxxBuildArgs Include='-DLLVM_ENABLE_RUNTIMES="libcxx%3Blibcxxabi"' />
+    </ItemGroup>
+    <Message Importance="High" Text="Running: $(_SetupEnvironment) cmake $(SourceLLVM)/runtimes -G '$(CMakeGenerator)' @(_LibCxxBuildArgs->'%(Identity)',' ')" />
+    <MakeDir Directories="$(LibCxxBuildDir)" Condition="!Exists('$(LibCxxBuildDir)')" />
+    <Exec WorkingDirectory="$(LibCxxBuildDir)"
+      Command="$(_SetupEnvironment) cmake $(SourceLLVM)/runtimes -G '$(CMakeGenerator)' @(_LibCxxBuildArgs->'%(Identity)',' ')"
+      IgnoreStandardErrorWarningFormat="true" />
+    <Exec WorkingDirectory="$(LibCxxBuildDir)"
+      Command="$(_BuildCommand)"
       IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
