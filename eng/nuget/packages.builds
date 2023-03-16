@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.Build.Traversal">
+  <ItemGroup>
+    <ProjectReference Include="Microsoft.NETCore.Runtime.Wasi.Sdk\Microsoft.NETCore.Runtime.Wasi.Sdk.builds" />
+  </ItemGroup>
+</Project>

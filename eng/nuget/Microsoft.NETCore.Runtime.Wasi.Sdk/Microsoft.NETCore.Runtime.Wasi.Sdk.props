@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <File Include="$(BinDir)\**" TargetPath="tools\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

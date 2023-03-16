@@ -1,7 +1,5 @@
-<Project Sdk="Microsoft.Build.NoTargets">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-  </PropertyGroup>
+<Project>
+  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.props" />
 
   <PropertyGroup>
     <MonoLLVMHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">linux</MonoLLVMHostOS>
@@ -206,17 +204,18 @@
       <FilesToDelete Include="$(BinDir)\bin\FileCheck*" />
       <FilesToDelete Include="$(BinDir)\lib\clang\libLLVM*" />
       <FilesToDelete Include="$(BinDir)\lib\clang\libobjwriter*" />
-      <FilesToDelete Include="$(BinDir)\lib\clang\clang\**" />
-      <FilesToDelete Include="$(BinDir)\lib\clang\lld\**" />
-      <FilesToDelete Include="$(BinDir)\lib\clang\llvm\**" />
       <FilesToDelete Include="$(BinDir)\share\clang\bash-autocomplete.sh" />
       <FilesToDelete Include="$(BinDir)\share\clang\clang-doc-default-stylesheet.css" />
       <FilesToDelete Include="$(BinDir)\share\clang\clang-include-fixer.*" />
       <FilesToDelete Include="$(BinDir)\share\clang\clang-rename.*" />
       <FilesToDelete Include="$(BinDir)\share\clang\index.js" />
       <FilesToDelete Include="$(BinDir)\share\clang\run-find-all-symbols.py" />
+      <DirsToDelete Include="$(BinDir)\lib\clang\clang" />
+      <DirsToDelete Include="$(BinDir)\lib\clang\lld" />
+      <DirsToDelete Include="$(BinDir)\lib\clang\llvm" />
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" ContinueOnError="true" TreatErrorsAsWarnings="true" />
+    <RemoveDir Directories="@(DirsToDelete)" />
   </Target>
 
   <Target Name="Build" AfterTargets="CopyLLVMToTree;BuildLibc;BuildCompilerRt;BuildLibCxx;ComposeProduct" />
