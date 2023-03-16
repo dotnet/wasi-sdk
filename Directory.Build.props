@@ -52,18 +52,18 @@
     <ProjectDir>$(__ProjectDir)\</ProjectDir>
     <RootRepoDir>$(ProjectDir)</RootRepoDir>
     <ProjectDir Condition="'$(__ProjectDir)'==''">$(MSBuildThisFileDirectory)</ProjectDir>
-  
+
     <BaseIntermediateOutputPath>$(RootRepoDir)artifacts\obj\$(PlatformConfigPathPart)\</BaseIntermediateOutputPath>
-  
+
     <SourceDir>$(__SourceDir)\</SourceDir>
     <SourceDir Condition="'$(__SourceDir)'==''">$(ProjectDir)src\</SourceDir>
-  
+
     <RootBinDir>$(__RootBinDir)\</RootBinDir>
     <RootBinDir Condition="'$(__RootBinDir)'==''">$(RootRepoDir)artifacts\</RootBinDir>
-  
+
     <BinDir>$(__BinDir)\</BinDir>
     <BinDir Condition="'$(__BinDir)'==''">$(RootBinDir)bin\$(PlatformConfigPathPart)\</BinDir>
-  
+
     <MonoLLVMDir>$(ProjectDir)artifacts\obj\$(PlatformConfigPathPart)\llvm</MonoLLVMDir>
   </PropertyGroup>
 
