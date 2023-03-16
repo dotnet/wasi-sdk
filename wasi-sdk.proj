@@ -7,9 +7,9 @@
     <MonoLLVMHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">linux</MonoLLVMHostOS>
     <MonoLLVMHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">osx</MonoLLVMHostOS>
     <MonoLLVMHostOS Condition="'$(OS)' == 'Windows_NT'">win</MonoLLVMHostOS>
-    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'linux'">$(runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmTransportVersion)</MonoLLVMClangVersion>
-    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'win'">$(runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmTransportVersion)</MonoLLVMClangVersion>
-    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'osx'">$(runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmTransportVersion)</MonoLLVMClangVersion>
+    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'linux'">$(runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
+    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'win'">$(runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
+    <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'osx'">$(runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -41,11 +41,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="runtime.$(MonoLLVMHostOS)-$(TargetArchitecture).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport"
+    <PackageReference Include="runtime.$(MonoLLVMHostOS)-$(TargetArchitecture).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.A.Transport"
                       Version="$(MonoLLVMClangVersion)"
                       PackageArch="$(TargetArchitecture)"
                       Condition="'$(TargetArchitecture)' != ''" />
-    <PackageReference Include="runtime.$(MonoLLVMHostOS)-$(BuildArchitecture).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport"
+    <PackageReference Include="runtime.$(MonoLLVMHostOS)-$(TargetArchitecture).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.B.Transport"
+                      Version="$(MonoLLVMClangVersion)"
+                      PackageArch="$(TargetArchitecture)"
+                      Condition="'$(TargetArchitecture)' != ''" />
+    <PackageReference Include="runtime.$(MonoLLVMHostOS)-$(BuildArchitecture).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.A.Transport"
+                      Version="$(MonoLLVMClangVersion)"
+                      PackageArch="$(BuildArchitecture)"
+                      Condition="'$(BuildArchitecture)' != ''" />
+    <PackageReference Include="runtime.$(MonoLLVMHostOS)-$(BuildArchitecture).Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.B.Transport"
                       Version="$(MonoLLVMClangVersion)"
                       PackageArch="$(BuildArchitecture)"
                       Condition="'$(BuildArchitecture)' != ''" />
@@ -58,7 +66,7 @@
     <ItemGroup>
       <LLVMFiles Include="$(NuGetPackageRoot)\$([System.String]::Copy(%(PackageReference.Identity)).ToLowerInvariant())\%(PackageReference.Version)\tools\$(MonoLLVMHostOS)-%(PackageReference.PackageArch)\**"
                  FileArch="%(PackageReference.PackageArch)"
-                 Condition="$([System.String]::Copy(%(PackageReference.Identity)).Contains('Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.Transport')) == 'true'" />
+                 Condition="$([System.String]::Copy(%(PackageReference.Identity)).Contains('Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.')) == 'true'" />
     </ItemGroup>
     <Copy SourceFiles="@(LLVMFiles)" DestinationFolder="$(MonoLLVMDir)\%(LLVMFiles.FileArch)\%(RecursiveDir)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
