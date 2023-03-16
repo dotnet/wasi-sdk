@@ -86,6 +86,12 @@
   </Target>
 
   <Target Name="BuildCompilerRt" AfterTargets="BuildLibc">
+    <ReadLinesFromFile File="$(BuildLLVM)\lib\clang\llvm\LLVMConfigVersion.cmake">
+      <Output TaskParameter="Lines" PropertyName="_LLVMVersionLine" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <_LLVMVersion>$([System.Text.RegularExpressions.Regex]::Match($(_LLVMVersionLine), '[0-9]+.[0-9]+.[0-9]+'))</_LLVMVersion>
+    </PropertyGroup>
     <ItemGroup>
       <_CompilerRtBuildArgs Include="-DCMAKE_SYSROOT=$(SysrootDir)" />
       <_CompilerRtBuildArgs Include="-DCMAKE_C_COMPILER_WORKS:BOOL=ON" />
@@ -100,9 +106,9 @@
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_ENABLE_IOS:BOOL=OFF" />
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_DEFAULT_TARGET_ONLY:BOOL=ON"/>
       <_CompilerRtBuildArgs Include="-DBUILD_LLVM_PREFIX=$(BuildLLVM)"/>
-      <_CompilerRtBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(WasiSdkVersion)'"/>
+      <_CompilerRtBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_OS_DIR=wasi"/>
-      <_CompilerRtBuildArgs Include="-DCMAKE_INSTALL_PREFIX=$(CompilerRtDir)/lib/clang/14.0.0/"/>
+      <_CompilerRtBuildArgs Include="-DCMAKE_INSTALL_PREFIX=$(CompilerRtDir)/lib/clang/$(_LLVMVersion)/"/>
       <_CompilerRtBuildArgs Include="-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"/>
     </ItemGroup>
     <Message Importance="High" Text="Running: $(_SetupEnvironment) cmake $(SourceLLVM)/compiler-rt/lib/builtins -G '$(CMakeGenerator)' @(_CompilerRtBuildArgs->'%(Identity)',' ')" />
@@ -112,6 +118,9 @@
       IgnoreStandardErrorWarningFormat="true" />
     <Exec WorkingDirectory="$(CompilerRtDir)"
       Command="$(_BuildCommand)"
+      IgnoreStandardErrorWarningFormat="true" />
+    <Exec WorkingDirectory="$(CompilerRtDir)"
+      Command="$(_BuildCommand) install"
       IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
@@ -152,8 +161,8 @@
       <_LibCxxBuildArgs Include="-DUNIX:BOOL=ON" />
       <_LibCxxBuildArgs Include="--debug-trycompile" />
       <_LibCxxBuildArgs Include="-DCMAKE_SYSROOT=$(SysrootDir)" />
-      <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(WasiSdkVersion)'"/>
-      <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(WasiSdkVersion)'"/>
+      <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
+      <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
       <_LibCxxBuildArgs Include="-DLIBCXX_LIBDIR_SUFFIX=/wasm32-wasi" />
       <_LibCxxBuildArgs Include="-DLIBCXXABI_LIBDIR_SUFFIX=/wasm32-wasi" />
       <_LibCxxBuildArgs Include='-DLLVM_ENABLE_RUNTIMES="libcxx%3Blibcxxabi"' />
@@ -166,9 +175,51 @@
     <Exec WorkingDirectory="$(LibCxxBuildDir)"
       Command="$(_BuildCommand)"
       IgnoreStandardErrorWarningFormat="true" />
+    <Exec WorkingDirectory="$(LibCxxBuildDir)"
+      Command="$(_BuildCommand) install"
+      IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
-  <Target Name="Build" AfterTargets="CopyLLVMToTree" />
+  <Target Name="ComposeProduct" AfterTargets="BuildLibCxx">
+    <ItemGroup>
+      <ComposeFiles Include="$(MonoLLVMDir)\$(TargetArchitecture)\**" />
+      <ComposeFiles Include="$(BaseIntermediateOutputPath)\sysrootprefix\**" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ComposeFiles)" DestinationFolder="$(BinDir)\%(RecursiveDir)" />
+    <Copy SourceFiles="$(RootRepoDir)src\config\config.sub" DestinationFolder="$(BinDir)\share\misc" />
+    <Copy SourceFiles="$(RootRepoDir)src\config\config.guess" DestinationFolder="$(BinDir)\share\misc" />
+    <Copy SourceFiles="$(RootRepoDir)wasi-sdk.cmake" DestinationFolder="$(BinDir)\share\cmake" />
+    <Copy SourceFiles="$(RootRepoDir)wasi-sdk-pthread.cmake" DestinationFolder="$(BinDir)\share\cmake" />
+    <Copy SourceFiles="$(CompilerRtDir)lib\wasi\libclang_rt.builtins-wasm32.a" DestinationFolder="$(BinDir)\lib\clang\$(_LLVMVersion)\lib\wasi"/>
+    <ItemGroup>
+      <FilesToDelete Include="$(BinDir)\bin\count*" />
+      <FilesToDelete Include="$(BinDir)\bin\llc*" />
+      <FilesToDelete Include="$(BinDir)\bin\llvm-as*" />
+      <FilesToDelete Include="$(BinDir)\bin\llvm-config*" />
+      <FilesToDelete Include="$(BinDir)\bin\llvm-dis*" />
+      <FilesToDelete Include="$(BinDir)\bin\llvm-mca*" />
+      <FilesToDelete Include="$(BinDir)\bin\llvm-tblgen*" />
+      <FilesToDelete Include="$(BinDir)\bin\llvm-PerfectShuffle*" />
+      <FilesToDelete Include="$(BinDir)\bin\not*" />
+      <FilesToDelete Include="$(BinDir)\bin\opt*" />
+      <FilesToDelete Include="$(BinDir)\bin\yaml-bench*" />
+      <FilesToDelete Include="$(BinDir)\bin\FileCheck*" />
+      <FilesToDelete Include="$(BinDir)\lib\clang\libLLVM*" />
+      <FilesToDelete Include="$(BinDir)\lib\clang\libobjwriter*" />
+      <FilesToDelete Include="$(BinDir)\lib\clang\clang\**" />
+      <FilesToDelete Include="$(BinDir)\lib\clang\lld\**" />
+      <FilesToDelete Include="$(BinDir)\lib\clang\llvm\**" />
+      <FilesToDelete Include="$(BinDir)\share\clang\bash-autocomplete.sh" />
+      <FilesToDelete Include="$(BinDir)\share\clang\clang-doc-default-stylesheet.css" />
+      <FilesToDelete Include="$(BinDir)\share\clang\clang-include-fixer.*" />
+      <FilesToDelete Include="$(BinDir)\share\clang\clang-rename.*" />
+      <FilesToDelete Include="$(BinDir)\share\clang\index.js" />
+      <FilesToDelete Include="$(BinDir)\share\clang\run-find-all-symbols.py" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" ContinueOnError="true" TreatErrorsAsWarnings="true" />
+  </Target>
+
+  <Target Name="Build" AfterTargets="CopyLLVMToTree;BuildLibc;BuildCompilerRt;BuildLibCxx;ComposeProduct" />
   <Target Name="Test" />
   <Target Name="Pack" DependsOnTargets="Build">
     <MSBuild Projects="eng/nuget/packages.builds" Targets="Build" />

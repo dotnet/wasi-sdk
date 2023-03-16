@@ -18,18 +18,17 @@
     <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(TargetsMobile)' == 'true'">x64</TargetArchitecture>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
     <Platform Condition="'$(Platform)' == '' and '$(InferPlatformFromTargetArchitecture)' == 'true'">$(TargetArchitecture)</Platform>
-
-    <BuildLLVM>$(MonoLLVMDir)\$(BuildArchitecture)</BuildLLVM>
-    <PackageLLVM>$(MonoLLVMDir)\$(TargetArchitecture)</PackageLLVM>
+  </PropertyGroup>
+  <PropertyGroup>
+    <BuildLLVM>$(MonoLLVMDir)\$(BuildArchitecture)\</BuildLLVM>
+    <PackageLLVM>$(MonoLLVMDir)\$(TargetArchitecture)\</PackageLLVM>
 
     <SourceLLVM>$(RootRepoDir)\src\llvm-project\</SourceLLVM>
 
-    <SysrootDir>$(BaseIntermediateOutputPath)/sysroot</SysrootDir>
+    <SysrootDir>$(BaseIntermediateOutputPath)/sysrootprefix/share/wasi-sysroot</SysrootDir>
 
-    <LibcBuildDir>$(BaseIntermediateOutputPath)/wasi-libc</LibcBuildDir>
-    <CompilerRtDir>$(BaseIntermediateOutputPath)/compiler-rt</CompilerRtDir>
-    <LibCxxBuildDir>$(BaseIntermediateOutputPath)/libcxx</LibCxxBuildDir>
-
-    <WasiSdkVersion>19.0.0</WasiSdkVersion>
+    <LibcBuildDir>$(BaseIntermediateOutputPath)/wasi-libc/</LibcBuildDir>
+    <CompilerRtDir>$(BaseIntermediateOutputPath)/compiler-rt/</CompilerRtDir>
+    <LibCxxBuildDir>$(BaseIntermediateOutputPath)/libcxx/</LibCxxBuildDir>
   </PropertyGroup>
 </Project>

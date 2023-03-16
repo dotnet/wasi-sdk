@@ -47,8 +47,6 @@
     <BinDir>$(__BinDir)\</BinDir>
     <BinDir Condition="'$(__BinDir)'==''">$(RootBinDir)bin\$(PlatformConfigPathPart)\</BinDir>
 
-    <DestDir>$(BaseIntermediateOutputPath)InstallRoot\$(PlatformConfigPathPart)</DestDir>
-
     <MonoLLVMDir>$(ProjectDir)artifacts\obj\$(PlatformConfigPathPart)\llvm</MonoLLVMDir>
 
   </PropertyGroup>
