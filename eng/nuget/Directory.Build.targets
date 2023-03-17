@@ -5,6 +5,24 @@
 
   <Import Project="$(NuGetPackageRoot)\microsoft.dotnet.build.tasks.packaging\$(MicrosoftDotNetBuildTasksPackagingVersion)\build\Microsoft.DotNet.Build.Tasks.Packaging.targets" />
 
+  <Target Name="GenerateUnixPermissionsFile" Condition="'$(TargetOS)' != 'win'">
+    <PropertyGroup>
+      <UnixFilePermissionsOutFile>$(ArtifactsObjDir)\$(MSBuildProjectName).UnixFilePermissions.xml</UnixFilePermissionsOutFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_BinFile Include="$(BinDir)bin\*" />
+      <Lines Include="&lt;FileList&gt;" />
+      <Lines Include="  &lt;File Path=&quot;tools\bin\%(_BinFile.FileName)%(_BinFile.Extension)&quot; Permission=&quot;755&quot; /&gt;" />
+      <Lines Include="&lt;/FileList&gt;" />
+    </ItemGroup>
+    <WriteLinesToFile Lines="@(Lines)" File="$(UnixFilePermissionsOutFile)" Overwrite="true" />
+
+    <ItemGroup>
+      <File Condition="'$(TargetOS)' != 'win'" Include="$(UnixFilePermissionsOutFile)" TargetPath="data\UnixFilePermissions.xml" SkipPackageFileCheck="true" />
+    </ItemGroup>
+  </Target>
+
   <!--
     Finds symbol files and injects them into the package build.
   -->

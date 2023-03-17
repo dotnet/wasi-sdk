@@ -5,4 +5,7 @@
   <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets))" />
+
+  <Target Name="_PrepareForPack" BeforeTargets="GetPackageFiles" DependsOnTargets="GenerateUnixPermissionsFile" Returns="@(PackageFile)" />
+
 </Project>
