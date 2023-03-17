@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <ItemGroup>
-    <File Include="$(BinDir)\**" TargetPath="tools\%(RecursiveDir)%(Filename)%(Extension)" />
+    <File Include="$(BinDir)bin\*" TargetPath="tools\bin" />
+    <File Include="$(BinDir)lib\**" TargetPath="tools\lib\%(RecursiveDir)%(Filename)%(Extension)" />
+    <File Include="$(BinDir)share\**" TargetPath="tools\share\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>
