@@ -52,13 +52,10 @@ stages:
         container:
           image: $(imagename)
         steps:
-        - bash: |
-            set -ex
-            git clean -ffdx
-            git reset --hard HEAD
-            git submodule update --init
-            git submodule foreach git clean -ffdx
-          displayName: 'Clean up working directory'
+        - checkout: self
+          clean: true
+          fetchDepth: 2
+          submodules: true
 
         - bash: |
             ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs)
@@ -83,13 +80,10 @@ stages:
         pool:
           vmImage: macos-11
         steps:
-        - bash: |
-            set -ex
-            git clean -ffdx
-            git reset --hard HEAD
-            git submodule update --init
-            git submodule foreach git clean -ffdx
-          displayName: 'Clean up working directory'
+        - checkout: self
+          clean: true
+          fetchDepth: 2
+          submodules: true
 
         - bash: |
             ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs)
@@ -122,14 +116,7 @@ stages:
         - checkout: self
           clean: true
           fetchDepth: 2
-
-        - script: |
-            git clean -ffdx
-            git reset --hard HEAD
-            git submodule update --init
-            git submodule foreach git clean -ffdx
-          displayName: 'Clean up working directory'
+          submodules: true
 
         - powershell: eng\build.ps1 -ci -restore -build -pack $(archflag) -configuration $(_BuildConfig) $(_InternalBuildArgs)
           displayName: 'Build and package'
-          
