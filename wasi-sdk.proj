@@ -38,6 +38,7 @@
     </_SetupEnvironment>
     <_BuildCommand Condition="'$(CMakeGenerator)' == 'Unix Makefiles'">$(_SetupEnvironment) make -j$([System.Environment]::ProcessorCount)</_BuildCommand>
     <_BuildCommand Condition="'$(CMakeGenerator)' == 'Ninja'">$(_SetupEnvironment) ninja </_BuildCommand>
+    <_MSysBinPrefix Condition="Exists('c:\msys64')">C:\msys64\usr\bin\</_MSysBinPrefix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -78,10 +79,10 @@
 
   <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree">
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="make -C src/wasi-libc CC=$(BuildLLVM)/bin/clang AR=$(BuildLLVM)/bin/llvm-ar NM=$(BuildLLVM)/bin/llvm-nm SYSROOT=$(SysrootDir) OBJDIR=$(LibcBuildDir)"
+      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(BuildLLVM)/bin/clang AR=$(BuildLLVM)/bin/llvm-ar NM=$(BuildLLVM)/bin/llvm-nm SYSROOT=$(SysrootDir) OBJDIR=$(LibcBuildDir)"
       IgnoreStandardErrorWarningFormat="true" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="make -C src/wasi-libc CC=$(BuildLLVM)/bin/clang AR=$(BuildLLVM)/bin/llvm-ar NM=$(BuildLLVM)/bin/llvm-nm SYSROOT=$(SysrootDir) OBJDIR=$(LibcBuildDir) THREAD_MODEL=posix"
+      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(BuildLLVM)/bin/clang AR=$(BuildLLVM)/bin/llvm-ar NM=$(BuildLLVM)/bin/llvm-nm SYSROOT=$(SysrootDir) OBJDIR=$(LibcBuildDir) THREAD_MODEL=posix"
       IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
