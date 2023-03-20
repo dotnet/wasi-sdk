@@ -1,5 +1,7 @@
-<Project>
-  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.props" />
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
 
   <PropertyGroup>
     <MonoLLVMHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">linux</MonoLLVMHostOS>
@@ -218,7 +220,7 @@
     <RemoveDir Directories="@(DirsToDelete)" />
   </Target>
 
-  <Target Name="Build" AfterTargets="CopyLLVMToTree;BuildLibc;BuildCompilerRt;BuildLibCxx;ComposeProduct" />
+  <Target Name="Build" DependsOnTargets="CopyLLVMToTree;BuildLibc;BuildCompilerRt;BuildLibCxx;ComposeProduct" />
   <Target Name="Test" />
   <Target Name="Pack" DependsOnTargets="Build">
     <MSBuild Projects="eng/nuget/packages.builds" Targets="Build" />
