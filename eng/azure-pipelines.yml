@@ -52,10 +52,12 @@ stages:
         container:
           image: $(imagename)
         steps:
-        - checkout: self
-          clean: true
-          fetchDepth: 2
-          submodules: true
+        - script: |
+            git clean -ffdx
+            git reset --hard HEAD
+            git submodule update --init
+            git submodule foreach git clean -ffdx
+          displayName: 'Clean up working directory and check out submodules'
 
         - bash: |
             ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs)
@@ -80,10 +82,12 @@ stages:
         pool:
           vmImage: macos-11
         steps:
-        - checkout: self
-          clean: true
-          fetchDepth: 2
-          submodules: true
+        - script: |
+            git clean -ffdx
+            git reset --hard HEAD
+            git submodule update --init
+            git submodule foreach git clean -ffdx
+          displayName: 'Clean up working directory and check out submodules'
 
         - bash: |
             ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs)
@@ -113,10 +117,12 @@ stages:
             name: $(DncEngInternalBuildPool)
             demands: ImageOverride -equals windows.vs2022.amd64
         steps:
-        - checkout: self
-          clean: true
-          fetchDepth: 2
-          submodules: true
+        - script: |
+            git clean -ffdx
+            git reset --hard HEAD
+            git submodule update --init
+            git submodule foreach git clean -ffdx
+          displayName: 'Clean up working directory and check out submodules'
 
         - powershell: eng\build.ps1 -ci -restore -build -pack $(archflag) -configuration $(_BuildConfig) $(_InternalBuildArgs)
           displayName: 'Build and package'
