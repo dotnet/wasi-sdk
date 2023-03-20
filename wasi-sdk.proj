@@ -78,12 +78,22 @@
   </Target>
 
   <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree">
+    <PropertyGroup>
+      <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">/$(BuildLLVM.Replace('\','/').Replace(':',''))</_UnixBuildLLVM>
+      <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' != 'win'">$(BuildLLVM)</_UnixBuildLLVM>
+      <_UnixSysrootDir Condition="'$(MonoLLVMHostOS)' == 'win'">/$(SysrootDir.Replace('\','/').Replace(':',''))</_UnixSysrootDir>
+      <_UnixSysrootDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(SysrootDir)</_UnixSysrootDir>
+      <_UnixLibcBuildDir Condition="'$(MonoLLVMHostOS)' == 'win'">/$(LibcBuildDir.Replace('\','/').Replace(':',''))</_UnixLibcBuildDir>
+      <_UnixLibcBuildDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(LibcBuildDir)</_UnixLibcBuildDir>
+    </PropertyGroup>
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(BuildLLVM)/bin/clang AR=$(BuildLLVM)/bin/llvm-ar NM=$(BuildLLVM)/bin/llvm-nm SYSROOT=$(SysrootDir) OBJDIR=$(LibcBuildDir)"
-      IgnoreStandardErrorWarningFormat="true" />
+      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(BuildLLVM)/bin/clang AR=$(BuildLLVM)/bin/llvm-ar NM=$(BuildLLVM)/bin/llvm-nm SYSROOT=$(SysrootDir) OBJDIR=$(LibcBuildDir) THREAD_MODEL=posix"
-      IgnoreStandardErrorWarningFormat="true" />
+      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir) THREAD_MODEL=posix"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
   </Target>
 
   <Target Name="BuildCompilerRt" AfterTargets="BuildLibc">

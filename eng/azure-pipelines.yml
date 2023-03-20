@@ -130,7 +130,7 @@ stages:
             Remove-Item msys2.exe  # Delete the archive again
             C:\msys64\usr\bin\bash -lc ' '
             C:\msys64\usr\bin\bash -lc 'pacman --noconfirm -Syuu'
-            C:\msys64\usr\bin\bash -lc 'pacman --noconfirm -S msys/make'
+            C:\msys64\usr\bin\bash -lc 'pacman --noconfirm -S msys/make msys/ninja msys/cmake msys/diffutils'
           displayName: Install MSYS2 (for GNU Make)
 
         - powershell: eng\build.ps1 -ci -restore -build -pack $(archflag) -configuration $(_BuildConfig) $(_InternalBuildArgs)
