@@ -73,7 +73,6 @@
     <Message Importance="High" Text="** Building WASI SDK with Clang:  $(BuildLLVM)" />
     <Message Importance="High" Text="** Packaging WASI SDK with Clang: $(PackageLLVM)" />
     <Message Importance="High" Text="** (These values should differ for cross-compilation)" />
-    <Message Importance="High" Text="** TARGET COMPLETE: CopyLLVMToTree" />
   </Target>
 
   <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree">
@@ -93,7 +92,6 @@
       Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir) THREAD_MODEL=posix$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
-    <Message Importance="High" Text="** TARGET COMPLETE: BuildLibc" />
   </Target>
 
   <Target Name="BuildCompilerRt" AfterTargets="BuildLibc">
@@ -133,7 +131,6 @@
     <Exec WorkingDirectory="$(CompilerRtDir)"
       Command="$(_BuildCommand) install"
       IgnoreStandardErrorWarningFormat="true" />
-    <Message Importance="High" Text="** TARGET COMPLETE: BuildCompilerRt" />
   </Target>
 
   <Target Name="BuildLibCxx" AfterTargets="BuildCompilerRt">
@@ -190,7 +187,6 @@
     <Exec WorkingDirectory="$(LibCxxBuildDir)"
       Command="$(_BuildCommand) install"
       IgnoreStandardErrorWarningFormat="true" />
-    <Message Importance="High" Text="** TARGET COMPLETE: BuildLibCxx" />
   </Target>
 
   <Target Name="ComposeProduct" AfterTargets="BuildLibCxx">
@@ -231,7 +227,6 @@
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" ContinueOnError="true" TreatErrorsAsWarnings="true" />
     <RemoveDir Directories="@(DirsToDelete)" />
-    <Message Importance="High" Text="** TARGET COMPLETE: ComposeProduct" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="CopyLLVMToTree;BuildLibc;BuildCompilerRt;BuildLibCxx;ComposeProduct" />
