@@ -236,7 +236,7 @@
 
   <Target Name="Build" DependsOnTargets="CopyLLVMToTree;BuildLibc;BuildCompilerRt;BuildLibCxx;ComposeProduct" />
   <Target Name="Test" />
-  <Target Name="Pack" DependsOnTargets="Build">
+  <Target Name="ReallyPack" BeforeTargets="Pack">
     <MSBuild Projects="eng/nuget/packages.builds" Targets="Build" />
   </Target>
 </Project>
