@@ -95,7 +95,7 @@
   </Target>
 
   <Target Name="BuildCompilerRt" AfterTargets="BuildLibc">
-    <ReadLinesFromFile File="$(BuildLLVM)\lib\clang\llvm\LLVMConfigVersion.cmake">
+    <ReadLinesFromFile File="$(BuildLLVM)\lib\cmake\llvm\LLVMConfigVersion.cmake">
       <Output TaskParameter="Lines" PropertyName="_LLVMVersionLine" />
     </ReadLinesFromFile>
     <PropertyGroup>
@@ -213,8 +213,10 @@
       <FilesToDelete Include="$(BinDir)\bin\opt*" />
       <FilesToDelete Include="$(BinDir)\bin\yaml-bench*" />
       <FilesToDelete Include="$(BinDir)\bin\FileCheck*" />
-      <FilesToDelete Include="$(BinDir)\lib\clang\libLLVM*" />
-      <FilesToDelete Include="$(BinDir)\lib\clang\libobjwriter*" />
+      <FilesToDelete Include="$(BinDir)\lib\libLLVM*a" />
+      <FilesToDelete Include="$(BinDir)\lib\LLVM*lib" />
+      <FilesToDelete Include="$(BinDir)\lib\libobjwriter*so*" />
+      <FilesToDelete Include="$(BinDir)\lib\objwriter*lib" />
       <FilesToDelete Include="$(BinDir)\share\clang\bash-autocomplete.sh" />
       <FilesToDelete Include="$(BinDir)\share\clang\clang-doc-default-stylesheet.css" />
       <FilesToDelete Include="$(BinDir)\share\clang\clang-include-fixer.*" />
@@ -224,6 +226,7 @@
       <DirsToDelete Include="$(BinDir)\lib\clang\clang" />
       <DirsToDelete Include="$(BinDir)\lib\clang\lld" />
       <DirsToDelete Include="$(BinDir)\lib\clang\llvm" />
+      <DirsToDelete Include="$(BinDir)\lib\cmake" />
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" ContinueOnError="true" TreatErrorsAsWarnings="true" />
     <RemoveDir Directories="@(DirsToDelete)" />
