@@ -103,29 +103,44 @@
     <PropertyGroup>
       <_LLVMVersion>$([System.Text.RegularExpressions.Regex]::Match($(_LLVMVersionLine), '[0-9]+.[0-9]+.[0-9]+'))</_LLVMVersion>
     </PropertyGroup>
+    <PropertyGroup>
+      <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">$(BuildLLVM.Replace('\','/'))</_UnixBuildLLVM>
+      <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' != 'win'">$(BuildLLVM)</_UnixBuildLLVM>
+      <_UnixSourceLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">$(SourceLLVM.Replace('\','/'))</_UnixSourceLLVM>
+      <_UnixSourceLLVM Condition="'$(MonoLLVMHostOS)' != 'win'">$(SourceLLVM)</_UnixSourceLLVM>
+      <_UnixSysrootDir Condition="'$(MonoLLVMHostOS)' == 'win'">$(SysrootDir.Replace('\','/'))</_UnixSysrootDir>
+      <_UnixSysrootDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(SysrootDir)</_UnixSysrootDir>
+      <_UnixMSBuildThisFileDirectory Condition="'$(MonoLLVMHostOS)' == 'win'">$(MSBuildThisFileDirectory.Replace('\','/'))</_UnixMSBuildThisFileDirectory>
+      <_UnixMSBuildThisFileDirectory Condition="'$(MonoLLVMHostOS)' != 'win'">$(MSBuildThisFileDirectory)</_UnixMSBuildThisFileDirectory>
+      <_UnixCompilerRtDir Condition="'$(MonoLLVMHostOS)' == 'win'">$(CompilerRtDir.Replace('\','/'))</_UnixCompilerRtDir>
+      <_UnixCompilerRtDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(CompilerRtDir)</_UnixCompilerRtDir>
+    </PropertyGroup>
     <ItemGroup>
-      <_CompilerRtBuildArgs Include="-DCMAKE_SYSROOT=$(SysrootDir)" />
+      <_CompilerRtBuildArgs Include="-DCMAKE_SYSROOT=$(_UnixSysrootDir)" />
       <_CompilerRtBuildArgs Include="-DCMAKE_C_COMPILER_WORKS:BOOL=ON" />
       <_CompilerRtBuildArgs Include="-DCMAKE_CXX_COMPILER_WORKS:BOOL=ON" />
-      <_CompilerRtBuildArgs Include="-DCMAKE_MODULE_PATH=$(MSBuildThisFileDirectory)/cmake" />
+      <_CompilerRtBuildArgs Include="-DCMAKE_MODULE_PATH=$(_UnixMSBuildThisFileDirectory)/cmake" />
       <_CompilerRtBuildArgs Include="-DCMAKE_BUILD_TYPE=RelWithDebInfo" />
-      <_CompilerRtBuildArgs Include="-DCMAKE_TOOLCHAIN_FILE=$(MSBuildThisFileDirectory)/microsoft-wasi-sdk.cmake" />
+      <_CompilerRtBuildArgs Include="-DCMAKE_TOOLCHAIN_FILE=$(_UnixMSBuildThisFileDirectory)/microsoft-wasi-sdk.cmake" />
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_BAREMETAL_BUILD:BOOL=ON" />
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_BUILD_XRAY:BOOL=OFF" />
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_INCLUDE_TESTS:BOOL=OFF" />
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_HAS_FPIC_FLAG:BOOL=OFF" />
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_ENABLE_IOS:BOOL=OFF" />
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_DEFAULT_TARGET_ONLY:BOOL=ON"/>
-      <_CompilerRtBuildArgs Include="-DBUILD_LLVM_PREFIX=$(BuildLLVM)"/>
-      <_CompilerRtBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
+      <_CompilerRtBuildArgs Include="-DBUILD_LLVM_PREFIX=$(_UnixBuildLLVM)"/>
+      <_CompilerRtBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_OS_DIR=wasi"/>
-      <_CompilerRtBuildArgs Include="-DCMAKE_INSTALL_PREFIX=$(CompilerRtDir)/lib/clang/$(_LLVMVersion)/"/>
+      <_CompilerRtBuildArgs Include="-DCMAKE_INSTALL_PREFIX=$(_UnixCompilerRtDir)/lib/clang/$(_LLVMVersion)/"/>
       <_CompilerRtBuildArgs Include="-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"/>
     </ItemGroup>
-    <Message Importance="High" Text="Running: $(_SetupEnvironment) cmake $(SourceLLVM)/compiler-rt/lib/builtins -G '$(CMakeGenerator)' @(_CompilerRtBuildArgs->'%(Identity)',' ')" />
+    <PropertyGroup>
+      <_CompilerRtCmakeArgs>$(_SetupEnvironment) cmake $(_UnixSourceLLVM)/compiler-rt/lib/builtins -G "$(CMakeGenerator)" @(_CompilerRtBuildArgs->'%(Identity)',' ')</_CompilerRtCmakeArgs>
+    </PropertyGroup>
+    <Message Importance="High" Text="Running: $(_CompilerRtCmakeArgs)" />
     <MakeDir Directories="$(CompilerRtDir)" Condition="!Exists('$(CompilerRtDir)')" />
     <Exec WorkingDirectory="$(CompilerRtDir)"
-      Command="$(_SetupEnvironment) cmake $(SourceLLVM)/compiler-rt/lib/builtins -G '$(CMakeGenerator)' @(_CompilerRtBuildArgs->'%(Identity)',' ')"
+      Command="$(_CompilerRtCmakeArgs)"
       IgnoreStandardErrorWarningFormat="true" />
     <Exec WorkingDirectory="$(CompilerRtDir)"
       Command="$(_BuildCommand)"
@@ -137,12 +152,22 @@
   </Target>
 
   <Target Name="BuildLibCxx" AfterTargets="BuildCompilerRt">
+    <PropertyGroup>
+      <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">$(BuildLLVM.Replace('\','/'))</_UnixBuildLLVM>
+      <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' != 'win'">$(BuildLLVM)</_UnixBuildLLVM>
+      <_UnixSourceLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">$(SourceLLVM.Replace('\','/'))</_UnixSourceLLVM>
+      <_UnixSourceLLVM Condition="'$(MonoLLVMHostOS)' != 'win'">$(SourceLLVM)</_UnixSourceLLVM>
+      <_UnixSysrootDir Condition="'$(MonoLLVMHostOS)' == 'win'">$(SysrootDir.Replace('\','/'))</_UnixSysrootDir>
+      <_UnixSysrootDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(SysrootDir)</_UnixSysrootDir>
+      <_UnixMSBuildThisFileDirectory Condition="'$(MonoLLVMHostOS)' == 'win'">$(MSBuildThisFileDirectory.Replace('\','/'))</_UnixMSBuildThisFileDirectory>
+      <_UnixMSBuildThisFileDirectory Condition="'$(MonoLLVMHostOS)' != 'win'">$(MSBuildThisFileDirectory)</_UnixMSBuildThisFileDirectory>
+    </PropertyGroup>
     <ItemGroup>
       <_LibCxxBuildArgs Include="-DCMAKE_C_COMPILER_WORKS:BOOL=ON" />
       <_LibCxxBuildArgs Include="-DCMAKE_CXX_COMPILER_WORKS:BOOL=ON" />
-      <_LibCxxBuildArgs Include="-DCMAKE_MODULE_PATH=$(MSBuildThisFileDirectory)/cmake" />
-      <_LibCxxBuildArgs Include="-DCMAKE_TOOLCHAIN_FILE=$(MSBuildThisFileDirectory)/microsoft-wasi-sdk.cmake" />
-      <_LibCxxBuildArgs Include="-DCMAKE_STAGING_PREFIX=$(SysrootDir)" />
+      <_LibCxxBuildArgs Include="-DCMAKE_MODULE_PATH=$(_UnixMSBuildThisFileDirectory)/cmake" />
+      <_LibCxxBuildArgs Include="-DCMAKE_TOOLCHAIN_FILE=$(_UnixMSBuildThisFileDirectory)/microsoft-wasi-sdk.cmake" />
+      <_LibCxxBuildArgs Include="-DCMAKE_STAGING_PREFIX=$(_UnixSysrootDir)" />
       <_LibCxxBuildArgs Include="-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON" />
       <_LibCxxBuildArgs Include="-DCXX_SUPPORTS_CXX11:BOOL=ON" />
       <_LibCxxBuildArgs Include="-DLIBCXX_ENABLE_THREADS:BOOL=OFF" />
@@ -157,7 +182,7 @@
       <_LibCxxBuildArgs Include="-DLIBCXX_ENABLE_EXCEPTIONS:BOOL=OFF" />
       <_LibCxxBuildArgs Include="-DLIBCXX_ENABLE_FILESYSTEM:BOOL=OFF" />
       <_LibCxxBuildArgs Include="-DLIBCXX_CXX_ABI=libcxxabi" />
-      <_LibCxxBuildArgs Include="-DLIBCXX_CXX_ABI_INCLUDE_PATHS=$(SourceLLVM)/libcxxabi/include" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_CXX_ABI_INCLUDE_PATHS=$(_UnixSourceLLVM)/libcxxabi/include" />
       <_LibCxxBuildArgs Include="-DLIBCXX_HAS_MUSL_LIBC:BOOL=ON" />
       <_LibCxxBuildArgs Include="-DLIBCXX_ABI_VERSION=2" />
       <_LibCxxBuildArgs Include="-DLIBCXXABI_ENABLE_EXCEPTIONS:BOOL=OFF" />
@@ -169,20 +194,23 @@
       <_LibCxxBuildArgs Include="-DLIBCXXABI_BUILD_EXTERNAL_THREAD_LIBRARY:BOOL=OFF" />
       <_LibCxxBuildArgs Include="-DLIBCXXABI_HAS_WIN32_THREAD_API:BOOL=OFF" />
       <_LibCxxBuildArgs Include="-DLIBCXXABI_ENABLE_PIC:BOOL=OFF" />
-      <_LibCxxBuildArgs Include="-DBUILD_LLVM_PREFIX=$(BuildLLVM)"/>
+      <_LibCxxBuildArgs Include="-DBUILD_LLVM_PREFIX=$(_UnixBuildLLVM)"/>
       <_LibCxxBuildArgs Include="-DUNIX:BOOL=ON" />
       <_LibCxxBuildArgs Include="--debug-trycompile" />
-      <_LibCxxBuildArgs Include="-DCMAKE_SYSROOT=$(SysrootDir)" />
-      <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
-      <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(MSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
+      <_LibCxxBuildArgs Include="-DCMAKE_SYSROOT=$(_UnixSysrootDir)" />
+      <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
+      <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
       <_LibCxxBuildArgs Include="-DLIBCXX_LIBDIR_SUFFIX=/wasm32-wasi" />
       <_LibCxxBuildArgs Include="-DLIBCXXABI_LIBDIR_SUFFIX=/wasm32-wasi" />
       <_LibCxxBuildArgs Include='-DLLVM_ENABLE_RUNTIMES="libcxx%3Blibcxxabi"' />
     </ItemGroup>
-    <Message Importance="High" Text="Running: $(_SetupEnvironment) cmake $(SourceLLVM)/runtimes -G '$(CMakeGenerator)' @(_LibCxxBuildArgs->'%(Identity)',' ')" />
+    <PropertyGroup>
+      <_LibCxxCmakeArgs>$(_SetupEnvironment) cmake $(_UnixSourceLLVM)/runtimes -G "$(CMakeGenerator)" @(_LibCxxBuildArgs->'%(Identity)',' ')</_LibCxxCmakeArgs>
+    </PropertyGroup>
+    <Message Importance="High" Text="Running: $(_LibCxxCmakeArgs)" />
     <MakeDir Directories="$(LibCxxBuildDir)" Condition="!Exists('$(LibCxxBuildDir)')" />
     <Exec WorkingDirectory="$(LibCxxBuildDir)"
-      Command="$(_SetupEnvironment) cmake $(SourceLLVM)/runtimes -G '$(CMakeGenerator)' @(_LibCxxBuildArgs->'%(Identity)',' ')"
+      Command="$(_LibCxxCmakeArgs)"
       IgnoreStandardErrorWarningFormat="true" />
     <Exec WorkingDirectory="$(LibCxxBuildDir)"
       Command="$(_BuildCommand)"
