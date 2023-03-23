@@ -65,14 +65,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Set the boolean below to true to generate packages with stabilized versions -->
-    <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
-    <StableVersion Condition="'$(StabilizePackageVersion)' == 'true' and '$(StableVersion)' == ''">$(PackageVersion)</StableVersion>
-
-    <PreReleaseLabel>preview8</PreReleaseLabel>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <BuildLLVM>$(MonoLLVMDir)\$(BuildArchitecture)\</BuildLLVM>
     <PackageLLVM>$(MonoLLVMDir)\$(TargetArchitecture)\</PackageLLVM>
 
