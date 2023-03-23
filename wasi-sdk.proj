@@ -35,8 +35,6 @@
     </_SetupEnvironment>
     <_BuildCommand Condition="'$(CMakeGenerator)' == 'Unix Makefiles'">$(_SetupEnvironment) make -j$([System.Environment]::ProcessorCount)</_BuildCommand>
     <_BuildCommand Condition="'$(CMakeGenerator)' == 'Ninja'">$(_SetupEnvironment) ninja </_BuildCommand>
-    <_MSysBinPrefix Condition="Exists('c:\msys64')">C:\msys64\usr\bin\bash -lc '</_MSysBinPrefix>
-    <_MSysBinSuffix Condition="Exists('c:\msys64')">'</_MSysBinSuffix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -76,6 +74,7 @@
   </Target>
 
   <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree">
+    <Error Condition="'$(MonoLLVMHostOS)' == 'win' and !Exists('$(MsysDir)')" Text="Error: You need to set the MsysDir environment variable pointing to the MSYS2 install root." />
     <PropertyGroup>
       <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">/$(BuildLLVM.Replace('\','/').Replace(':',''))</_UnixBuildLLVM>
       <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' != 'win'">$(BuildLLVM)</_UnixBuildLLVM>
@@ -83,6 +82,8 @@
       <_UnixSysrootDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(SysrootDir)</_UnixSysrootDir>
       <_UnixLibcBuildDir Condition="'$(MonoLLVMHostOS)' == 'win'">/$(LibcBuildDir.Replace('\','/').Replace(':',''))</_UnixLibcBuildDir>
       <_UnixLibcBuildDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(LibcBuildDir)</_UnixLibcBuildDir>
+      <_MSysBinPrefix Condition="'$(MonoLLVMHostOS)' == 'win'">$(MsysDir)\usr\bin\bash -lc '</_MSysBinPrefix>
+      <_MSysBinSuffix Condition="'$(MonoLLVMHostOS)' == 'win'">'</_MSysBinSuffix>
     </PropertyGroup>
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
       Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir)$(_MSysBinSuffix)"
