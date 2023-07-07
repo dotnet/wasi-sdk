@@ -35,12 +35,12 @@ stages:
             x64:
               assetManifestOS: linux
               assetManifestPlatform: x64
-              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
               archflag: --arch x64
             arm64:
               assetManifestOS: linux
               assetManifestPlatform: arm64
-              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
               archflag: --arch arm64
         pool:
           ${{ if eq(variables['System.TeamProject'], 'public') }}:
