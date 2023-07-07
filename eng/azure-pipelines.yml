@@ -153,7 +153,7 @@ stages:
         - powershell: eng\build.ps1 -ci -restore -build -pack $(archflag) -configuration $(_BuildConfig) $(_InternalBuildArgs) /p:TargetWorkloadOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) /p:MsysDir=c:\msys64 /p:RestoreUsingNuGetTargets=false
           displayName: 'Build and package'
 
-        - powershell: eng\common\build.ps1 -ci -restore -publish -configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=$(_BuildConfig)-$(assetManifestOS) /p:TargetWorkloadOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) -projects $(Build.SourcesDirectory)\wasi-sdk.proj
+        - powershell: eng\common\build.ps1 -ci -restore -publish -configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=$(assetManifestOS) /p:TargetWorkloadOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) -projects $(Build.SourcesDirectory)\wasi-sdk.proj
           displayName: Publish packages
           condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
 

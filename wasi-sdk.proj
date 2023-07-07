@@ -6,6 +6,7 @@
     <MonoLLVMHostOS Condition="'$(OS)' == 'Windows_NT'">win</MonoLLVMHostOS>
     <MonoLLVMTargetOS>$(MonoLLVMHostOS)</MonoLLVMTargetOS>
     <MonoLLVMTargetOS Condition="'$(AssetManifestOS)' != ''">$(AssetManifestOS)</MonoLLVMTargetOS>
+    <MonoLLVMTargetOSPrefix Condition="'$(MonoLLVMHostOS)' != '$(MonoLLVMTargetOS)'">$(AssetManifestOS)-</MonoLLVMTargetOSPrefix>
     <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'linux'">$(runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
     <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'linux'">$(runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
     <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'win'">$(runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
@@ -74,7 +75,7 @@
     <Copy SourceFiles="@(LLVMHostFiles)" DestinationFolder="$(MonoLLVMDir)\%(LLVMHostFiles.FileArch)\%(RecursiveDir)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
-    <Copy SourceFiles="@(LLVMTargetFiles)" DestinationFolder="$(MonoLLVMDir)\$(AssetManifestOS)-%(LLVMTargetFiles.FileArch)\%(RecursiveDir)">
+    <Copy SourceFiles="@(LLVMTargetFiles)" DestinationFolder="$(MonoLLVMDir)\$(MonoLLVMTargetOSPrefix)%(LLVMTargetFiles.FileArch)\%(RecursiveDir)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
     <Message Importance="High" Text="** Building WASI SDK with Clang:  $(BuildLLVM)" />

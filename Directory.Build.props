@@ -67,7 +67,7 @@
   <PropertyGroup>
     <BuildLLVM>$(MonoLLVMDir)\$(BuildArchitecture)\</BuildLLVM>
     <PackageLLVM>$(MonoLLVMDir)\$(TargetArchitecture)\</PackageLLVM>
-    <PackageLLVM Condition="'$(AssetManifestOS)' != ''">$(MonoLLVMDir)\$(AssetManifestOS)-$(TargetArchitecture)\</PackageLLVM>
+    <PackageLLVM Condition="'$(AssetManifestOS)' == 'linux-musl'">$(MonoLLVMDir)\$(AssetManifestOS)-$(TargetArchitecture)\</PackageLLVM>
 
     <SourceLLVM>$(RootRepoDir)\src\llvm-project\</SourceLLVM>
 
