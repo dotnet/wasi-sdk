@@ -67,7 +67,7 @@
   <PropertyGroup>
     <BuildLLVM>$(MonoLLVMDir)\$(BuildArchitecture)\</BuildLLVM>
     <PackageLLVM>$(MonoLLVMDir)\$(TargetArchitecture)\</PackageLLVM>
-    <PackageLLVM Condition="Exists('$(ROOTFS_DIR)/lib/ld-musl-aarch64.so.1') or Exists('$(ROOTFS_DIR)/lib/ld-musl-x86_64.so.1')">$(MonoLLVMDir)\musl-$(TargetArchitecture)\</PackageLLVM>
+    <PackageLLVM Condition="'$(AssetManifestOS)' != ''">$(MonoLLVMDir)\$(AssetManifestOS)-$(TargetArchitecture)\</PackageLLVM>
 
     <SourceLLVM>$(RootRepoDir)\src\llvm-project\</SourceLLVM>
 

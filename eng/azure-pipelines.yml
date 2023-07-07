@@ -70,7 +70,7 @@ stages:
           displayName: 'Clean up working directory and check out submodules'
 
         - bash: |
-            ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:RestoreUsingNuGetTargets=false
+            ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:RestoreUsingNuGetTargets=false
           displayName: 'Build and package'
 
         - bash: |

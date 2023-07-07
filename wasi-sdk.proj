@@ -5,7 +5,7 @@
     <MonoLLVMHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">osx</MonoLLVMHostOS>
     <MonoLLVMHostOS Condition="'$(OS)' == 'Windows_NT'">win</MonoLLVMHostOS>
     <MonoLLVMTargetOS>$(MonoLLVMHostOS)</MonoLLVMTargetOS>
-    <MonoLLVMTargetOS Condition="Exists('$(ROOTFS_DIR)/lib/ld-musl-aarch64.so.1') or Exists('$(ROOTFS_DIR)/lib/ld-musl-x86_64.so.1')">linux-musl</MonoLLVMTargetOS>
+    <MonoLLVMTargetOS Condition="'$(AssetManifestOS)' != ''">$(AssetManifestOS)</MonoLLVMTargetOS>
     <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'linux'">$(runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
     <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'linux'">$(runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
     <MonoLLVMClangVersion Condition="'$(MonoLLVMHostOS)' == 'win'">$(runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion)</MonoLLVMClangVersion>
@@ -74,7 +74,7 @@
     <Copy SourceFiles="@(LLVMHostFiles)" DestinationFolder="$(MonoLLVMDir)\%(LLVMHostFiles.FileArch)\%(RecursiveDir)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
-    <Copy SourceFiles="@(LLVMTargetFiles)" DestinationFolder="$(MonoLLVMDir)\musl-%(LLVMTargetFiles.FileArch)\%(RecursiveDir)">
+    <Copy SourceFiles="@(LLVMTargetFiles)" DestinationFolder="$(MonoLLVMDir)\$(AssetManifestOS)-%(LLVMTargetFiles.FileArch)\%(RecursiveDir)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
     <Message Importance="High" Text="** Building WASI SDK with Clang:  $(BuildLLVM)" />
