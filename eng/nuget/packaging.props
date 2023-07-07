@@ -15,7 +15,7 @@
 
     <!-- mono doesn't currently use the index so don't force it to be in sync -->
     <SkipIndexCheck>true</SkipIndexCheck>
-
+    <PackageVersion>$(VersionPrefix)</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.pkgproj'">

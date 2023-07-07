@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <MajorVersion>8</MajorVersion>
+    <MinorVersion>0</MinorVersion>
     <VersionPrefix>19.0.0</VersionPrefix>
-    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
+    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <PreReleaseVersionIteration>4</PreReleaseVersionIteration>
+    <WasiVersion>$(VersionPrefix)</WasiVersion>
   </PropertyGroup>
   <PropertyGroup>
+    <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
+    <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SwixPackageVersion>1.1.87-gba258badda</SwixPackageVersion>
+    <WixPackageVersion>1.0.0-v3.14.0.5722</WixPackageVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <WorkloadSdkBandVersions Include="8.0.100" SupportsMachineArch="true" />
+  </ItemGroup>
+  <PropertyGroup>
     <MicrosoftDotNetBuildTasksPackagingVersion>8.0.0-beta.23224.1</MicrosoftDotNetBuildTasksPackagingVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>14.0.0-alpha.1.23171.2</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>14.0.0-alpha.1.23171.2</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>14.0.0-alpha.1.23171.2</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>14.0.0-alpha.1.23171.2</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>14.0.0-alpha.1.23171.2</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>14.0.0-alpha.1.23171.2</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>14.0.0-alpha.1.23171.2</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>14.0.0-alpha.1.23171.2</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>14.0.0-alpha.1.23171.2</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>14.0.0-alpha.1.23171.2</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>14.0.0-alpha.1.23171.2</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>14.0.0-alpha.1.23171.2</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.23224.1</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23355.1</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23355.1</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23355.1</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23355.1</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23355.1</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23355.1</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23355.1</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23355.1</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23355.1</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23355.1</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23355.1</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23355.1</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
   </PropertyGroup>
 </Project>

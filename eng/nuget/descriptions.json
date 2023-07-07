@@ -10,8 +10,13 @@
         "CommonTypes": [ ]
     },
     {
-        "Name": "Microsoft.NETCore.Runtime.Wasi.Sdk",
+        "Name": "Microsoft.NET.Runtime.Wasi.Sdk",
         "Description": "The .NET Core fork of the WASI SDK project, used to publish for browser-wasi.",
+        "CommonTypes": [ ]
+    },
+    {
+        "Name": "Microsoft.NET.Workload.Wasi.Current.Manifest",
+        "Description": "The workload manifest used to help install the wasi sdk.",
         "CommonTypes": [ ]
     }
 ]

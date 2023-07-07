@@ -1,0 +1,5 @@
+<Project>
+  <ImportGroup Condition="'$(RuntimeIdentifier)' == 'wasi-wasm' and '$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '8.0'))">
+    <Import Project="Sdk.props" Sdk="Microsoft.NET.Runtime.Wasi.Sdk" />
+  </ImportGroup>
+</Project>

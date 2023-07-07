@@ -6,6 +6,11 @@
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets))" />
 
-  <Target Name="_PrepareForPack" BeforeTargets="GetPackageFiles" DependsOnTargets="GenerateUnixPermissionsFile" Returns="@(PackageFile)" />
+  <Target Name="_PrepareForPack" BeforeTargets="GetPackageFiles" DependsOnTargets="GenerateUnixPermissionsFile" Returns="@(PackageFile)">
+    <!-- Override the id to include the sdk band as per the workload installer spec -->
+    <PropertyGroup>
+      <Id>Microsoft.NET.Runtime.Wasi.$(WasiVersion).Sdk.$(PackageRID)</Id>
+    </PropertyGroup>
+  </Target>
 
 </Project>
