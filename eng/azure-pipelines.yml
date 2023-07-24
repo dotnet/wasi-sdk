@@ -174,10 +174,6 @@ stages:
             artifactName: IntermediateArtifacts
             artifactType: container
 
-        - script: |
-            rmdir /s /q binaryen node python llvm emscripten
-          displayName: Remove temporary artifacts
-
       - job: Build_Workloads
         displayName: Workloads
         dependsOn:
