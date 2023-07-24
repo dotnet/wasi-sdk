@@ -20,8 +20,8 @@
     <WorkloadSdkBandVersions Include="8.0.100" SupportsMachineArch="true" />
   </ItemGroup>
   <PropertyGroup>
-    <MicrosoftDotNetBuildTasksPackagingVersion>8.0.0-beta.23364.2</MicrosoftDotNetBuildTasksPackagingVersion>
-    <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.23364.2</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetBuildTasksPackagingVersion>8.0.0-beta.23371.1</MicrosoftDotNetBuildTasksPackagingVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.23371.1</MicrosoftDotNetBuildTasksTemplatingVersion>
     <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23355.1</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
     <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23355.1</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23355.1</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
