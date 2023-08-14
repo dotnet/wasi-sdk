@@ -23,8 +23,6 @@ stages:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: true
       enableMicrobuild: true
-      variables:
-        - _BuildConfig: Release
       jobs:
 
       ############ LINUX BUILD ############
