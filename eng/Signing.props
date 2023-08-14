@@ -2,6 +2,8 @@
 <Project>
   <ItemGroup>
     <FileExtensionSignInfo Update=".nupkg" CertificateName="NuGet" />
+    <FileExtensionSignInfo Update=".zip" CertificateName="None" />
+    <FileExtensionSignInfo Include=".msi" CertificateName="MicrosoftDotNet500" />
   </ItemGroup>
   <ItemGroup>
     <ItemsToSign Include="$(VisualStudioSetupInsertionPath)\**\*.msi" Condition="'$(PostBuildSign)' != 'true'" />
