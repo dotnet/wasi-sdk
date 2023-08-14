@@ -195,6 +195,12 @@ stages:
               archflag: -arch x64
               SkipPublishWorkloads: false
         steps:
+        - script: |
+            git clean -ffdx
+            git reset --hard HEAD
+            git submodule update --init
+            git submodule foreach git clean -ffdx
+          displayName: 'Clean up working directory and check out submodules'
         - task: DownloadPipelineArtifact@2
           inputs:
             artifact: IntermediateArtifacts
