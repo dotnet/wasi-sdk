@@ -23,6 +23,7 @@
     <MicrosoftDotNetBuildTasksInstallersVersion>8.0.0-beta.23224.1</MicrosoftDotNetBuildTasksInstallersVersion>
     <MicrosoftDotNetBuildTasksPackagingVersion>8.0.0-beta.23404.2</MicrosoftDotNetBuildTasksPackagingVersion>
     <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.23404.2</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetBuildTasksWorkloadsVersion>8.0.0-beta.23224.1</MicrosoftDotNetBuildTasksWorkloadsVersion>
     <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23401.4</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
     <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23401.4</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23401.4</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
