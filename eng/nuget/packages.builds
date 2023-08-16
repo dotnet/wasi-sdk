@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.Build.Traversal">
   <ItemGroup>
     <ProjectReference Include="Microsoft.NET.Runtime.Wasi.Sdk\Microsoft.NET.Runtime.Wasi.Sdk.builds" />
-    <ProjectReference Condition="'$(TargetWorkloadOS)' == 'win' and '$(PlatformName)' == 'x64'" Include="Microsoft.NET.Workload.Wasi.Current.Manifest\Microsoft.NET.Workload.Wasi.Current.Manifest.builds" />
+    <ProjectReference Condition="'$(AssetManifestOS)' == 'win' and '$(PlatformName)' == 'x64'" Include="Microsoft.NET.Workload.Wasi.Current.Manifest\Microsoft.NET.Workload.Wasi.Current.Manifest.builds" />
   </ItemGroup>
 </Project>
