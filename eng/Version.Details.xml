@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23404.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23451.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>1d39647dd408f7afd99cce01f26bba1d6bdeb248</Sha>
+      <Sha>4665b3d04e1da3796b965c3c3e3b97f55c449a6e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23224.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23451.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>d14c4adbdbb8c7ee060f9e333883fc9890939b66</Sha>
+      <Sha>4665b3d04e1da3796b965c3c3e3b97f55c449a6e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Packaging" Version="8.0.0-beta.23404.2">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Packaging" Version="8.0.0-beta.23451.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>1d39647dd408f7afd99cce01f26bba1d6bdeb248</Sha>
+      <Sha>4665b3d04e1da3796b965c3c3e3b97f55c449a6e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="8.0.0-beta.23404.2">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="8.0.0-beta.23451.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>1d39647dd408f7afd99cce01f26bba1d6bdeb248</Sha>
+      <Sha>4665b3d04e1da3796b965c3c3e3b97f55c449a6e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Workloads" Version="8.0.0-beta.23224.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Workloads" Version="8.0.0-beta.23451.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>d14c4adbdbb8c7ee060f9e333883fc9890939b66</Sha>
+      <Sha>4665b3d04e1da3796b965c3c3e3b97f55c449a6e</Sha>
     </Dependency>
   </ToolsetDependencies>
   <ProductDependencies>
