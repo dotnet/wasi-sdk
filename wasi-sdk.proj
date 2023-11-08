@@ -138,7 +138,7 @@
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_ENABLE_IOS:BOOL=OFF" />
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_DEFAULT_TARGET_ONLY:BOOL=ON"/>
       <_CompilerRtBuildArgs Include="-DBUILD_LLVM_PREFIX=$(_UnixBuildLLVM)"/>
-      <_CompilerRtBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
+      <_CompilerRtBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(WasiVersion)'"/>
       <_CompilerRtBuildArgs Include="-DCOMPILER_RT_OS_DIR=wasi"/>
       <_CompilerRtBuildArgs Include="-DCMAKE_INSTALL_PREFIX=$(_UnixCompilerRtDir)/lib/clang/$(_LLVMVersion)/"/>
       <_CompilerRtBuildArgs Include="-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"/>
@@ -206,8 +206,8 @@
       <_LibCxxBuildArgs Include="-DUNIX:BOOL=ON" />
       <_LibCxxBuildArgs Include="--debug-trycompile" />
       <_LibCxxBuildArgs Include="-DCMAKE_SYSROOT=$(_UnixSysrootDir)" />
-      <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
-      <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(VersionPrefix)'"/>
+      <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(WasiVersion)'"/>
+      <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(WasiVersion)'"/>
       <_LibCxxBuildArgs Include="-DLIBCXX_LIBDIR_SUFFIX=/wasm32-wasi" />
       <_LibCxxBuildArgs Include="-DLIBCXXABI_LIBDIR_SUFFIX=/wasm32-wasi" />
       <_LibCxxBuildArgs Include='-DLLVM_ENABLE_RUNTIMES="libcxx%3Blibcxxabi"' />
