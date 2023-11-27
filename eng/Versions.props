@@ -21,10 +21,12 @@
     <WorkloadSdkBandVersions Include="9.0.100" SupportsMachineArch="true" />
   </ItemGroup>
   <PropertyGroup>
+    <!-- arcade dependencies -->
     <MicrosoftDotNetBuildTasksInstallersVersion>9.0.0-beta.23577.1</MicrosoftDotNetBuildTasksInstallersVersion>
     <MicrosoftDotNetBuildTasksPackagingVersion>9.0.0-beta.23577.1</MicrosoftDotNetBuildTasksPackagingVersion>
     <MicrosoftDotNetBuildTasksTemplatingVersion>9.0.0-beta.23577.1</MicrosoftDotNetBuildTasksTemplatingVersion>
     <MicrosoftDotNetBuildTasksWorkloadsVersion>9.0.0-beta.23577.1</MicrosoftDotNetBuildTasksWorkloadsVersion>
+    <!-- llvm-project dependencies -->
     <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23563.1</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
     <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>16.0.5-alpha.1.23563.1</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>16.0.5-alpha.1.23563.1</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
