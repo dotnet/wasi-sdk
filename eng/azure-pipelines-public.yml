@@ -3,11 +3,13 @@ trigger:
   branches:
     include:
     - dotnet/main
+    - dotnet/release/*
 
 pr:
   branches:
     include:
     - dotnet/main
+    - dotnet/release/*
 
 variables:
   - template: /eng/common-variables.yml
@@ -33,8 +35,6 @@ stages:
       - job: Build_Linux
         displayName: Linux
         timeoutInMinutes: 480
-        variables:
-        - _BuildConfig: Release
         strategy:
           matrix:
             x64:
@@ -78,8 +78,6 @@ stages:
       - job: Build_macOS
         displayName: macOS
         timeoutInMinutes: 480
-        variables:
-        - _BuildConfig: Release
         strategy:
           matrix:
             x64:
@@ -108,20 +106,16 @@ stages:
       - job: Build_Windows
         displayName: Windows
         timeoutInMinutes: 480
-        variables:
-        - _BuildConfig: Release
         strategy:
           matrix:
             x64:
               assetManifestOS: win
               assetManifestPlatform: x64
               archflag: -arch x64
-              SkipPublishWorkloads: true
             arm64:
               assetManifestOS: win
               assetManifestPlatform: arm64
               archflag: -arch arm64
-              SkipPublishWorkloads: true
         pool:
           name: $(DncEngPublicBuildPool)
           demands: ImageOverride -equals 1es-windows-2022-open
@@ -175,7 +169,6 @@ stages:
               assetManifestOS: win
               assetManifestPlatform: x64
               archflag: -arch x64
-              SkipPublishWorkloads: false
         steps:
         - script: |
             git clean -ffdx
@@ -231,6 +224,5 @@ stages:
             targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
             artifactName: 'Workloads'
           continueOnError: true
-          condition: ne(variables['SkipPublishWorkloads'], 'true')
         - powershell: $(CheckNuGetSizesScript)
           displayName: Check NuGet sizes
