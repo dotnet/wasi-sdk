@@ -161,8 +161,8 @@ stages:
           - Build_Windows
         timeoutInMinutes: 120
         pool:
-          name: $(DncEngInternalBuildPool)
-          demands: ImageOverride -equals windows.vs2022.amd64
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals windows.vs2022.amd64.open
         strategy:
           matrix:
             x64:
