@@ -1,0 +1,84 @@
+diff --git a/expected/wasm32-wasi-threads/predefined-macros.txt b/expected/wasm32-wasi-threads/predefined-macros.txt
+index a9f2982..38ff061 100644
+--- a/expected/wasm32-wasi-threads/predefined-macros.txt
++++ b/expected/wasm32-wasi-threads/predefined-macros.txt
+@@ -2507,6 +2507,16 @@
+ #define __FLT_MIN_EXP__ (-125)
+ #define __FLT_MIN__ 1.17549435e-38F
+ #define __FLT_RADIX__ 2
++#define __FPCLASS_NEGINF 0x0004
++#define __FPCLASS_NEGNORMAL 0x0008
++#define __FPCLASS_NEGSUBNORMAL 0x0010
++#define __FPCLASS_NEGZERO 0x0020
++#define __FPCLASS_POSINF 0x0200
++#define __FPCLASS_POSNORMAL 0x0100
++#define __FPCLASS_POSSUBNORMAL 0x0080
++#define __FPCLASS_POSZERO 0x0040
++#define __FPCLASS_QNAN 0x0002
++#define __FPCLASS_SNAN 0x0001
+ #define __compiler_ATOMIC_BOOL_LOCK_FREE 2
+ #define __compiler_ATOMIC_CHAR16_T_LOCK_FREE 2
+ #define __compiler_ATOMIC_CHAR32_T_LOCK_FREE 2
+@@ -2610,6 +2620,11 @@
+ #define __LONG_LONG_MAX__ 9223372036854775807LL
+ #define __LONG_MAX __LONG_MAX__
+ #define __LONG_MAX__ 2147483647L
++#define __MEMORY_SCOPE_DEVICE 1
++#define __MEMORY_SCOPE_SINGLE 4
++#define __MEMORY_SCOPE_SYSTEM 0
++#define __MEMORY_SCOPE_WRKGRP 2
++#define __MEMORY_SCOPE_WVFRNT 3
+ #define __NAMESER 19991006
+ #define __NEED_FILE 
+ #define __NEED___isoc_va_list 
+@@ -3025,7 +3040,7 @@
+ #define __tg_real_remquo(x,y,z) (__RETCAST_2(x, y)( __FLT(x) && __FLT(y) ? remquof(x, y, z) : __LDBL((x)+(y)) ? remquol(x, y, z) : remquo(x, y, z) ))
+ #define __tm_gmtoff tm_gmtoff
+ #define __tm_zone tm_zone
+-#define __va_copy(d,s) __builtin_va_copy(d,s)
++#define __va_copy(d,s) __builtin_va_copy(d, s)
+ #define __wasi__ 1
+ #define __wasi_api_h 
+ #define __wasi_libc_environ_h 
+diff --git a/expected/wasm32-wasi/predefined-macros.txt b/expected/wasm32-wasi/predefined-macros.txt
+index 234ad3c..955f090 100644
+--- a/expected/wasm32-wasi/predefined-macros.txt
++++ b/expected/wasm32-wasi/predefined-macros.txt
+@@ -2470,6 +2470,16 @@
+ #define __FLT_MIN_EXP__ (-125)
+ #define __FLT_MIN__ 1.17549435e-38F
+ #define __FLT_RADIX__ 2
++#define __FPCLASS_NEGINF 0x0004
++#define __FPCLASS_NEGNORMAL 0x0008
++#define __FPCLASS_NEGSUBNORMAL 0x0010
++#define __FPCLASS_NEGZERO 0x0020
++#define __FPCLASS_POSINF 0x0200
++#define __FPCLASS_POSNORMAL 0x0100
++#define __FPCLASS_POSSUBNORMAL 0x0080
++#define __FPCLASS_POSZERO 0x0040
++#define __FPCLASS_QNAN 0x0002
++#define __FPCLASS_SNAN 0x0001
+ #define __compiler_ATOMIC_BOOL_LOCK_FREE 2
+ #define __compiler_ATOMIC_CHAR16_T_LOCK_FREE 2
+ #define __compiler_ATOMIC_CHAR32_T_LOCK_FREE 2
+@@ -2573,6 +2583,11 @@
+ #define __LONG_LONG_MAX__ 9223372036854775807LL
+ #define __LONG_MAX __LONG_MAX__
+ #define __LONG_MAX__ 2147483647L
++#define __MEMORY_SCOPE_DEVICE 1
++#define __MEMORY_SCOPE_SINGLE 4
++#define __MEMORY_SCOPE_SYSTEM 0
++#define __MEMORY_SCOPE_WRKGRP 2
++#define __MEMORY_SCOPE_WVFRNT 3
+ #define __NAMESER 19991006
+ #define __NEED_FILE 
+ #define __NEED___isoc_va_list 
+@@ -2988,7 +3003,7 @@
+ #define __tg_real_remquo(x,y,z) (__RETCAST_2(x, y)( __FLT(x) && __FLT(y) ? remquof(x, y, z) : __LDBL((x)+(y)) ? remquol(x, y, z) : remquo(x, y, z) ))
+ #define __tm_gmtoff tm_gmtoff
+ #define __tm_zone tm_zone
+-#define __va_copy(d,s) __builtin_va_copy(d,s)
++#define __va_copy(d,s) __builtin_va_copy(d, s)
+ #define __wasi__ 1
+ #define __wasi_api_h 
+ #define __wasi_libc_environ_h 
