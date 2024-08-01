@@ -95,6 +95,9 @@
       <_MSysBinPrefix Condition="'$(MonoLLVMHostOS)' == 'win'">$(MsysDir)\usr\bin\bash -lc '</_MSysBinPrefix>
       <_MSysBinSuffix Condition="'$(MonoLLVMHostOS)' == 'win'">'</_MSysBinSuffix>
     </PropertyGroup>
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)src/wasi-libc"
+      Command="git apply --ignore-whitespace $(MSBuildThisFileDirectory)eng/wasi-libc.patch"
+      IgnoreStandardErrorWarningFormat="true"/>
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
       Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir)$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
