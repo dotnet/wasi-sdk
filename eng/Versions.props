@@ -21,10 +21,10 @@
   </ItemGroup>
   <PropertyGroup>
     <!-- arcade dependencies -->
-    <MicrosoftDotNetBuildTasksInstallersVersion>9.0.0-beta.24421.2</MicrosoftDotNetBuildTasksInstallersVersion>
-    <MicrosoftDotNetBuildTasksPackagingVersion>9.0.0-beta.24421.2</MicrosoftDotNetBuildTasksPackagingVersion>
-    <MicrosoftDotNetBuildTasksTemplatingVersion>9.0.0-beta.24421.2</MicrosoftDotNetBuildTasksTemplatingVersion>
-    <MicrosoftDotNetBuildTasksWorkloadsVersion>9.0.0-beta.24421.2</MicrosoftDotNetBuildTasksWorkloadsVersion>
+    <MicrosoftDotNetBuildTasksInstallersVersion>9.0.0-beta.24423.2</MicrosoftDotNetBuildTasksInstallersVersion>
+    <MicrosoftDotNetBuildTasksPackagingVersion>9.0.0-beta.24423.2</MicrosoftDotNetBuildTasksPackagingVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>9.0.0-beta.24423.2</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetBuildTasksWorkloadsVersion>9.0.0-beta.24423.2</MicrosoftDotNetBuildTasksWorkloadsVersion>
     <!-- llvm-project dependencies -->
     <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>19.0.0-alpha.1.24401.1</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmATransportVersion>
     <runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>19.0.0-alpha.1.24401.1</runtimewinarm64MicrosoftNETCoreRuntimeMonoLLVMWasmBTransportVersion>
