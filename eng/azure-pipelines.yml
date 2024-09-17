@@ -28,6 +28,10 @@ extends:
     sdl:
       git:
         submodules: false # TODO: we should reenable this
+      tsa:
+        enabled: true
+      policheck:
+        enabled: true
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
