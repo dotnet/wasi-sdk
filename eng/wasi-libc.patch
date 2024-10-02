@@ -1,10 +1,20 @@
 diff --git a/expected/wasm32-wasi-threads/predefined-macros.txt b/expected/wasm32-wasi-threads/predefined-macros.txt
-index a9f2982..38ff061 100644
+index a9f2982..db4a1d5 100644
 --- a/expected/wasm32-wasi-threads/predefined-macros.txt
 +++ b/expected/wasm32-wasi-threads/predefined-macros.txt
-@@ -2507,6 +2507,16 @@
+@@ -2422,6 +2422,7 @@
+ #define __DBL_MIN_10_EXP__ (-307)
+ #define __DBL_MIN_EXP__ (-1021)
+ #define __DBL_MIN__ 2.2250738585072014e-308
++#define __DBL_NORM_MAX__ 1.7976931348623157e+308
+ #define __DECIMAL_DIG__ __LDBL_DECIMAL_DIG__
+ #define __DEFINED_FILE 
+ #define __DEFINED___isoc_va_list 
+@@ -2506,7 +2507,18 @@
+ #define __FLT_MIN_10_EXP__ (-37)
  #define __FLT_MIN_EXP__ (-125)
  #define __FLT_MIN__ 1.17549435e-38F
++#define __FLT_NORM_MAX__ 3.40282347e+38F
  #define __FLT_RADIX__ 2
 +#define __FPCLASS_NEGINF 0x0004
 +#define __FPCLASS_NEGNORMAL 0x0008
@@ -19,7 +29,22 @@ index a9f2982..38ff061 100644
  #define __compiler_ATOMIC_BOOL_LOCK_FREE 2
  #define __compiler_ATOMIC_CHAR16_T_LOCK_FREE 2
  #define __compiler_ATOMIC_CHAR32_T_LOCK_FREE 2
-@@ -2610,6 +2620,11 @@
+@@ -2518,6 +2530,8 @@
+ #define __compiler_ATOMIC_SHORT_LOCK_FREE 2
+ #define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
+ #define __compiler_ATOMIC_WCHAR_T_LOCK_FREE 2
++#define __GCC_CONSTRUCTIVE_SIZE 64
++#define __GCC_DESTRUCTIVE_SIZE 64
+ #define __GNUC_STDC_INLINE__ 1
+ #define __GNUC_VA_LIST 1
+ #define __GXX_ABI_VERSION 1002
+@@ -2605,11 +2619,17 @@
+ #define __LDBL_MIN_10_EXP__ (-4931)
+ #define __LDBL_MIN_EXP__ (-16381)
+ #define __LDBL_MIN__ 3.36210314311209350626267781732175260e-4932L
++#define __LDBL_NORM_MAX__ 1.18973149535723176508575932662800702e+4932L
+ #define __LITTLE_ENDIAN 1234
+ #define __LITTLE_ENDIAN__ 1
  #define __LONG_LONG_MAX__ 9223372036854775807LL
  #define __LONG_MAX __LONG_MAX__
  #define __LONG_MAX__ 2147483647L
@@ -31,7 +56,17 @@ index a9f2982..38ff061 100644
  #define __NAMESER 19991006
  #define __NEED_FILE 
  #define __NEED___isoc_va_list 
-@@ -3025,7 +3040,7 @@
+@@ -2729,6 +2749,9 @@
+ #define __SIZE_TYPE__ long unsigned int
+ #define __SIZE_WIDTH__ 32
+ #define __STDARG_H 
++#define __STDC_EMBED_EMPTY__ 2
++#define __STDC_EMBED_FOUND__ 1
++#define __STDC_EMBED_NOT_FOUND__ 0
+ #define __STDC_HOSTED__ 1
+ #define __STDC_IEC_559__ 1
+ #define __STDC_ISO_10646__ 201206L
+@@ -3025,7 +3048,7 @@
  #define __tg_real_remquo(x,y,z) (__RETCAST_2(x, y)( __FLT(x) && __FLT(y) ? remquof(x, y, z) : __LDBL((x)+(y)) ? remquol(x, y, z) : remquo(x, y, z) ))
  #define __tm_gmtoff tm_gmtoff
  #define __tm_zone tm_zone
@@ -40,13 +75,44 @@ index a9f2982..38ff061 100644
  #define __wasi__ 1
  #define __wasi_api_h 
  #define __wasi_libc_environ_h 
+@@ -3100,6 +3123,8 @@
+ #define __wasm__ 1
+ #define __wasm_atomics__ 1
+ #define __wasm_bulk_memory__ 1
++#define __wasm_multivalue__ 1
++#define __wasm_reference_types__ 1
+ #define _tolower(a) ((a)|0x20)
+ #define _toupper(a) ((a)&0x5f)
+ #define acos(x) __tg_real_complex(acos, (x))
+diff --git a/expected/wasm32-wasi-threads/undefined-symbols.txt b/expected/wasm32-wasi-threads/undefined-symbols.txt
+index a685151..33215bf 100644
+--- a/expected/wasm32-wasi-threads/undefined-symbols.txt
++++ b/expected/wasm32-wasi-threads/undefined-symbols.txt
+@@ -59,6 +59,7 @@ __imported_wasi_snapshot_preview1_sock_recv
+ __imported_wasi_snapshot_preview1_sock_send
+ __imported_wasi_snapshot_preview1_sock_shutdown
+ __imported_wasi_thread_spawn
++__indirect_function_table
+ __letf2
+ __lttf2
+ __main_argc_argv
 diff --git a/expected/wasm32-wasi/predefined-macros.txt b/expected/wasm32-wasi/predefined-macros.txt
-index 234ad3c..955f090 100644
+index 234ad3c..81c3ea9 100644
 --- a/expected/wasm32-wasi/predefined-macros.txt
 +++ b/expected/wasm32-wasi/predefined-macros.txt
-@@ -2470,6 +2470,16 @@
+@@ -2385,6 +2385,7 @@
+ #define __DBL_MIN_10_EXP__ (-307)
+ #define __DBL_MIN_EXP__ (-1021)
+ #define __DBL_MIN__ 2.2250738585072014e-308
++#define __DBL_NORM_MAX__ 1.7976931348623157e+308
+ #define __DECIMAL_DIG__ __LDBL_DECIMAL_DIG__
+ #define __DEFINED_FILE 
+ #define __DEFINED___isoc_va_list 
+@@ -2469,7 +2470,18 @@
+ #define __FLT_MIN_10_EXP__ (-37)
  #define __FLT_MIN_EXP__ (-125)
  #define __FLT_MIN__ 1.17549435e-38F
++#define __FLT_NORM_MAX__ 3.40282347e+38F
  #define __FLT_RADIX__ 2
 +#define __FPCLASS_NEGINF 0x0004
 +#define __FPCLASS_NEGNORMAL 0x0008
@@ -61,7 +127,22 @@ index 234ad3c..955f090 100644
  #define __compiler_ATOMIC_BOOL_LOCK_FREE 2
  #define __compiler_ATOMIC_CHAR16_T_LOCK_FREE 2
  #define __compiler_ATOMIC_CHAR32_T_LOCK_FREE 2
-@@ -2573,6 +2583,11 @@
+@@ -2481,6 +2493,8 @@
+ #define __compiler_ATOMIC_SHORT_LOCK_FREE 2
+ #define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
+ #define __compiler_ATOMIC_WCHAR_T_LOCK_FREE 2
++#define __GCC_CONSTRUCTIVE_SIZE 64
++#define __GCC_DESTRUCTIVE_SIZE 64
+ #define __GNUC_STDC_INLINE__ 1
+ #define __GNUC_VA_LIST 1
+ #define __GXX_ABI_VERSION 1002
+@@ -2568,11 +2582,17 @@
+ #define __LDBL_MIN_10_EXP__ (-4931)
+ #define __LDBL_MIN_EXP__ (-16381)
+ #define __LDBL_MIN__ 3.36210314311209350626267781732175260e-4932L
++#define __LDBL_NORM_MAX__ 1.18973149535723176508575932662800702e+4932L
+ #define __LITTLE_ENDIAN 1234
+ #define __LITTLE_ENDIAN__ 1
  #define __LONG_LONG_MAX__ 9223372036854775807LL
  #define __LONG_MAX __LONG_MAX__
  #define __LONG_MAX__ 2147483647L
@@ -73,7 +154,17 @@ index 234ad3c..955f090 100644
  #define __NAMESER 19991006
  #define __NEED_FILE 
  #define __NEED___isoc_va_list 
-@@ -2988,7 +3003,7 @@
+@@ -2692,6 +2712,9 @@
+ #define __SIZE_TYPE__ long unsigned int
+ #define __SIZE_WIDTH__ 32
+ #define __STDARG_H 
++#define __STDC_EMBED_EMPTY__ 2
++#define __STDC_EMBED_FOUND__ 1
++#define __STDC_EMBED_NOT_FOUND__ 0
+ #define __STDC_HOSTED__ 1
+ #define __STDC_IEC_559__ 1
+ #define __STDC_ISO_10646__ 201206L
+@@ -2988,7 +3011,7 @@
  #define __tg_real_remquo(x,y,z) (__RETCAST_2(x, y)( __FLT(x) && __FLT(y) ? remquof(x, y, z) : __LDBL((x)+(y)) ? remquol(x, y, z) : remquo(x, y, z) ))
  #define __tm_gmtoff tm_gmtoff
  #define __tm_zone tm_zone
@@ -82,3 +173,24 @@ index 234ad3c..955f090 100644
  #define __wasi__ 1
  #define __wasi_api_h 
  #define __wasi_libc_environ_h 
+@@ -3061,6 +3084,8 @@
+ #define __wasm32 1
+ #define __wasm32__ 1
+ #define __wasm__ 1
++#define __wasm_multivalue__ 1
++#define __wasm_reference_types__ 1
+ #define _tolower(a) ((a)|0x20)
+ #define _toupper(a) ((a)&0x5f)
+ #define acos(x) __tg_real_complex(acos, (x))
+diff --git a/expected/wasm32-wasi/undefined-symbols.txt b/expected/wasm32-wasi/undefined-symbols.txt
+index b9cdb34..68db1a7 100644
+--- a/expected/wasm32-wasi/undefined-symbols.txt
++++ b/expected/wasm32-wasi/undefined-symbols.txt
+@@ -56,6 +56,7 @@ __imported_wasi_snapshot_preview1_sock_accept
+ __imported_wasi_snapshot_preview1_sock_recv
+ __imported_wasi_snapshot_preview1_sock_send
+ __imported_wasi_snapshot_preview1_sock_shutdown
++__indirect_function_table
+ __letf2
+ __lttf2
+ __main_argc_argv
