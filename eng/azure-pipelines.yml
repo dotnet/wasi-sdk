@@ -161,7 +161,7 @@ extends:
             timeoutInMinutes: 480
             pool:
               name: Azure Pipelines
-              image: macos-12
+              image: macos-13
               os: macOS
             steps:
             - script: |
@@ -186,7 +186,7 @@ extends:
             timeoutInMinutes: 480
             pool:
               name: Azure Pipelines
-              image: macos-12
+              image: macos-13
               os: macOS
             steps:
             - script: |
