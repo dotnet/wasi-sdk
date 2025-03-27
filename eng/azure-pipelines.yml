@@ -61,12 +61,8 @@ extends:
               os: linux
             container: mariner20crossamd64
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
 
             - bash: |
                 ./build.sh --ci --restore --build --pack --arch x64 --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=linux /p:PlatformName=x64 /p:PackageRID=linux-x64 /p:RestoreUsingNuGetTargets=false
@@ -87,12 +83,8 @@ extends:
               os: linux
             container: mariner20crossamd64
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
 
             - bash: |
                 ./build.sh --ci --restore --build --pack --arch arm64 --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=linux /p:PlatformName=arm64 /p:PackageRID=linux-arm64 /p:RestoreUsingNuGetTargets=false
@@ -113,12 +105,8 @@ extends:
               os: linux
             container: mariner20crossamd64
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
 
             - bash: |
                 ./build.sh --ci --restore --build --pack --arch x64 --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=linux-musl /p:PlatformName=x64 /p:PackageRID=linux-musl-x64 /p:RestoreUsingNuGetTargets=false
@@ -139,12 +127,8 @@ extends:
               os: linux
             container: mariner20crossamd64
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
 
             - bash: |
                 ./build.sh --ci --restore --build --pack --arch arm64 --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=linux-musl /p:PlatformName=arm64 /p:PackageRID=linux-musl-arm64 /p:RestoreUsingNuGetTargets=false
@@ -164,12 +148,8 @@ extends:
               image: macos-13
               os: macOS
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
 
             - bash: |
                 ./build.sh --ci --restore --build --pack --arch x64 --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:RestoreUsingNuGetTargets=false
@@ -189,12 +169,8 @@ extends:
               image: macos-13
               os: macOS
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
 
             - bash: |
                 ./build.sh --ci --restore --build --pack --arch arm64 --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:RestoreUsingNuGetTargets=false
@@ -214,12 +190,8 @@ extends:
               image: 1es-windows-2022
               os: windows
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
 
             - powershell: |
                 C:\msys64\usr\bin\bash -lc ' '
@@ -258,12 +230,8 @@ extends:
               image: 1es-windows-2022
               os: windows
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
 
             - powershell: |
                 C:\msys64\usr\bin\bash -lc ' '
@@ -305,12 +273,8 @@ extends:
               demands: ImageOverride -equals windows.vs2022.amd64
               os: windows
             steps:
-            - script: |
-                git clean -ffdx
-                git reset --hard HEAD
-                git submodule update --init
-                git submodule foreach git clean -ffdx
-              displayName: 'Clean up working directory and check out submodules'
+            - checkout: self
+              submodules: recursive
             - task: DownloadPipelineArtifact@2
               inputs:
                 artifact: Packages_win_x64
