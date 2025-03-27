@@ -62,14 +62,11 @@ stages:
           demands: ImageOverride -equals build.ubuntu.2204.amd64.open
         container:
           image: $(imagename)
-        steps:
-        - script: |
-            git clean -ffdx
-            git reset --hard HEAD
-            git submodule update --init
-            git submodule foreach git clean -ffdx
-          displayName: 'Clean up working directory and check out submodules'
+        preSteps:
+        - checkout: self
+          submodules: recursive
 
+        steps:
         - bash: |
             ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:RestoreUsingNuGetTargets=false
           displayName: 'Build and package'
@@ -90,14 +87,11 @@ stages:
               archflag: --arch arm64
         pool:
           vmImage: macos-13
-        steps:
-        - script: |
-            git clean -ffdx
-            git reset --hard HEAD
-            git submodule update --init
-            git submodule foreach git clean -ffdx
-          displayName: 'Clean up working directory and check out submodules'
+        preSteps:
+        - checkout: self
+          submodules: recursive
 
+        steps:
         - bash: |
             ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:RestoreUsingNuGetTargets=false
           displayName: 'Build and package'
@@ -119,14 +113,11 @@ stages:
         pool:
           name: $(DncEngPublicBuildPool)
           demands: ImageOverride -equals 1es-windows-2022-open
-        steps:
-        - script: |
-            git clean -ffdx
-            git reset --hard HEAD
-            git submodule update --init
-            git submodule foreach git clean -ffdx
-          displayName: 'Clean up working directory and check out submodules'
+        preSteps:
+        - checkout: self
+          submodules: recursive
 
+        steps:
         - powershell: |
             C:\msys64\usr\bin\bash -lc ' '
             C:\msys64\usr\bin\bash -lc 'pacman --noconfirm -Syuu'
@@ -169,13 +160,11 @@ stages:
               assetManifestOS: win
               assetManifestPlatform: x64
               archflag: -arch x64
+        preSteps:
+        - checkout: self
+          submodules: recursive
+
         steps:
-        - script: |
-            git clean -ffdx
-            git reset --hard HEAD
-            git submodule update --init
-            git submodule foreach git clean -ffdx
-          displayName: 'Clean up working directory and check out submodules'
         - task: DownloadPipelineArtifact@2
           inputs:
             artifact: IntermediateArtifacts
