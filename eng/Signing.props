@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <PropertyGroup>
-    <NoSignJS>true</NoSignJS>
-  </PropertyGroup>
   <ItemGroup>
     <FileExtensionSignInfo Update=".nupkg" CertificateName="NuGet" />
     <FileExtensionSignInfo Update=".zip" CertificateName="None" />
+    <!-- We don't need to code sign .js files because they are not used in Windows Script Host. -->
+    <FileExtensionSignInfo Update=".js" CertificateName="None" />
   </ItemGroup>
   <ItemGroup>
     <ItemsToSign Include="$(VisualStudioSetupInsertionPath)\**\*.msi" Condition="'$(PostBuildSign)' != 'true'" />
