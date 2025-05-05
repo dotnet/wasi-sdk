@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+  <PropertyGroup>
+    <NoSignJS>true</NoSignJS>
+  </PropertyGroup>
   <ItemGroup>
     <FileExtensionSignInfo Update=".nupkg" CertificateName="NuGet" />
     <FileExtensionSignInfo Update=".zip" CertificateName="None" />
