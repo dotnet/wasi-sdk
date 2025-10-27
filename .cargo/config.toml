@@ -1,0 +1,6 @@
+# add invalid feed to prevent restore from crates.io
+[registries]
+"InvalidFeed" = { index = "sparse+https://INVALID/cargo/registry/" }
+
+[source.crates-io]
+replace-with = "InvalidFeed"
