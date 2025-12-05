@@ -34,7 +34,7 @@ extends:
         enabled: true
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
-        image: 1es-windows-2019
+        image: 1es-windows-2022
         os: windows
     containers:
       mariner20crossamd64:
