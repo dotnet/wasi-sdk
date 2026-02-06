@@ -119,6 +119,12 @@ stages:
 
         steps:
 
+        - powershell: |
+            Invoke-WebRequest "https://github.com/user-attachments/files/25131618/make-4.4.1-2-x86_64.zip" -OutFile C:\make.zip
+            Expand-Archive -LiteralPath C:\make.zip -DestinationPath C:\
+            cp C:\make-4.4.1-2-x86_64\usr\bin\make.exe C:\msys64\usr\bin\
+          displayName: Install GNU Make
+
         - script: |
             .\build.cmd $(archflag) -restore -build -pack -ci -configuration $(_BuildConfig) -sign -publish /p:SkipWorkloads=true /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) /p:MsysDir=c:\msys64 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping /p:SignCheckExclusionsFile='$(Build.SourcesDirectory)/eng/SignCheckExclusionsFile.txt' $(_InternalBuildArgs)
           displayName: Build and Publish
