@@ -120,8 +120,8 @@ stages:
         steps:
 
         - powershell: |
-            Invoke-WebRequest "https://github.com/user-attachments/files/25131618/make-4.4.1-2-x86_64.zip" -OutFile C:\make.zip
-            Invoke-WebRequest "https://github.com/user-attachments/files/25132026/diffutils-3.12-1-x86_64.zip" -OutFile C:\diffutils.zip
+            Invoke-WebRequest "https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/make/make-4.4.1-2-x86_64.zip" -OutFile C:\make.zip
+            Invoke-WebRequest "https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/diffutils/diffutils-3.12-1-x86_64.zip" -OutFile C:\diffutils.zip
             Expand-Archive -LiteralPath C:\make.zip -DestinationPath C:\
             Expand-Archive -LiteralPath C:\diffutils.zip -DestinationPath C:\
             cp C:\make-4.4.1-2-x86_64\usr\bin\make.exe C:\msys64\usr\bin\
