@@ -118,11 +118,15 @@ stages:
           submodules: recursive
 
         steps:
+
         - powershell: |
-            C:\msys64\usr\bin\bash -lc ' '
-            C:\msys64\usr\bin\bash -lc 'pacman --noconfirm -Syuu'
-            C:\msys64\usr\bin\bash -lc 'pacman --noconfirm -S msys/make msys/ninja msys/cmake msys/diffutils'
-          displayName: Install MSYS2 packages (GNU Make and related)
+            Invoke-WebRequest "https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/make/make-4.4.1-2-x86_64.zip" -OutFile C:\make.zip
+            Invoke-WebRequest "https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/diffutils/diffutils-3.12-1-x86_64.zip" -OutFile C:\diffutils.zip
+            Expand-Archive -LiteralPath C:\make.zip -DestinationPath C:\
+            Expand-Archive -LiteralPath C:\diffutils.zip -DestinationPath C:\
+            cp C:\make-4.4.1-2-x86_64\usr\bin\make.exe C:\msys64\usr\bin\
+            cp C:\diffutils-3.12-1-x86_64\usr\bin\diff.exe C:\msys64\usr\bin\
+          displayName: Install make and diff
 
         - script: |
             .\build.cmd $(archflag) -restore -build -pack -ci -configuration $(_BuildConfig) -sign -publish /p:SkipWorkloads=true /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) /p:MsysDir=c:\msys64 /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping /p:SignCheckExclusionsFile='$(Build.SourcesDirectory)/eng/SignCheckExclusionsFile.txt' $(_InternalBuildArgs)
