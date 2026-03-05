@@ -36,8 +36,6 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
-    settings:
-      networkIsolationPolicy: Permissive,CFSClean,CFSClean2
     containers:
       mariner20crossamd64:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
