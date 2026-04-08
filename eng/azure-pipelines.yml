@@ -47,12 +47,13 @@ extends:
         parameters:
           enablePublishBuildArtifacts: true
           enablePublishBuildAssets: true
-          enablePublishUsingPipelines: true
+          publishingVersion: 4
           enableMicrobuild: true
           jobs:
 
           ############ LINUX x64 BUILD ############
           - job: Build_Linux_x64
+            enablePublishing: true
             displayName: Linux_x64
             timeoutInMinutes: 480
             pool:
@@ -76,6 +77,7 @@ extends:
 
           ############ LINUX arm64 BUILD ############
           - job: Build_Linux_arm64
+            enablePublishing: true
             displayName: Linux_arm64
             timeoutInMinutes: 480
             pool:
@@ -99,6 +101,7 @@ extends:
 
           ############ LINUX MUSL x64 BUILD ############
           - job: Build_Linux_musl_x64
+            enablePublishing: true
             displayName: Linux_musl_x64
             timeoutInMinutes: 480
             pool:
@@ -122,6 +125,7 @@ extends:
 
           ############ LINUX MUSL arm64 BUILD ############
           - job: Build_Linux_musl_arm64
+            enablePublishing: true
             displayName: Linux_musl_arm64
             timeoutInMinutes: 480
             pool:
@@ -145,6 +149,7 @@ extends:
 
           ############ MACOS x64 BUILD ############
           - job: Build_macOS_x64
+            enablePublishing: true
             displayName: macOS_x64
             timeoutInMinutes: 480
             pool:
@@ -167,6 +172,7 @@ extends:
 
           ############ MACOS arm64 BUILD ############
           - job: Build_macOS_arm64
+            enablePublishing: true
             displayName: macOS_arm64
             timeoutInMinutes: 480
             pool:
@@ -189,6 +195,7 @@ extends:
 
           ############ WINDOWS x64 BUILD ############
           - job: Build_Windows_x64
+            enablePublishing: true
             displayName: Windows_x64
             timeoutInMinutes: 480
             pool:
@@ -234,6 +241,7 @@ extends:
 
           ############ WINDOWS arm64 BUILD ############
           - job: Build_Windows_arm64
+            enablePublishing: true
             displayName: Windows_arm64
             timeoutInMinutes: 480
             pool:
@@ -279,6 +287,7 @@ extends:
 
           ############ Workloads BUILD ############
           - job: Build_Workloads
+            enablePublishing: true
             displayName: Workloads
             dependsOn:
               - Build_Windows_x64
@@ -349,6 +358,7 @@ extends:
     ############ POST BUILD ARCADE LOGIC ############
     - template: /eng/common/templates-official/post-build/post-build.yml@self
       parameters:
+        publishingInfraVersion: 4
         enableSourceLinkValidation: false
         enableSigningValidation: false
         enableSymbolValidation: false
