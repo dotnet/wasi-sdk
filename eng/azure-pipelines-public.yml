@@ -27,12 +27,13 @@ stages:
     parameters:
       enablePublishBuildArtifacts: true
       enablePublishBuildAssets: true
-      enablePublishUsingPipelines: true
+      publishingVersion: 4
       enableMicrobuild: true
       jobs:
 
       ############ LINUX BUILD ############
       - job: Build_Linux
+        enablePublishing: true
         displayName: Linux
         timeoutInMinutes: 480
         strategy:
@@ -73,6 +74,7 @@ stages:
 
       ############ MACOS BUILD ############
       - job: Build_macOS
+        enablePublishing: true
         displayName: macOS
         timeoutInMinutes: 480
         strategy:
@@ -98,6 +100,7 @@ stages:
 
       ############ WINDOWS BUILD ############
       - job: Build_Windows
+        enablePublishing: true
         displayName: Windows
         timeoutInMinutes: 480
         strategy:
@@ -151,6 +154,7 @@ stages:
             artifactType: container
 
       - job: Build_Workloads
+        enablePublishing: true
         displayName: Workloads
         dependsOn:
           - Build_Windows
