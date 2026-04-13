@@ -7,31 +7,18 @@ set -ueo pipefail
 # Command-line parsing; this script is meant to be run from a higher-level
 # script, so don't do anything fancy.
 runwasi="$1"
-compiler="$2"
-options="$3"
-input="$4"
+input="$2"
+wasm="$3"
 
 # Compile names for generated files.
-wasm="$input.$options.wasm"
-stdout_observed="$input.$options.stdout.observed"
-stderr_observed="$input.$options.stderr.observed"
-exit_status_observed="$input.$options.exit_status.observed"
+stdout_observed="$wasm.stdout.observed"
+stderr_observed="$wasm.stderr.observed"
+exit_status_observed="$wasm.exit_status.observed"
 
-# Optionally load compiler options from a file.
-if [ -e "$input.options" ]; then
-    file_options=$(cat "$input.options")
-else
-    file_options=
-fi
-
-echo "Testing $input..."
-
-# Compile the testcase.
-$compiler $options $file_options "$input" -o "$wasm"
-
-# If we don't have a runwasi command, we're just doing compile-only testing.
+# Double-check that a runwasi command was specified since otherwise this script
+# was invoked with no arguments which isn't as intended.
 if [ "$runwasi" == "" ]; then
-    exit 0
+    exit 1
 fi
 
 # Determine the input file to write to stdin.
@@ -59,12 +46,20 @@ fi
 
 # Run the test, capturing stdout, stderr, and the exit status.
 exit_status=0
-"$runwasi" $env $dir "$wasm" $dirarg \
+$runwasi $env $dir "$wasm" $dirarg \
     < "$stdin" \
     > "$stdout_observed" \
     2> "$stderr_observed" \
     || exit_status=$?
 echo $exit_status > "$exit_status_observed"
+
+# On Windows Wasmtime will exit with error code 3 for aborts. On Unix Wasmtime
+# will exit with status 134. Paper over this difference by pretending to be Unix
+# on Windows and converting exit code 3 into 134 for the purposes of asserting
+# test output.
+if [ "$OSTYPE" = "msys" ] && [ "$exit_status" = "3" ]; then
+  echo 134 > "$exit_status_observed"
+fi
 
 # Determine the reference files to compare with.
 if [ -e "$input.stdout.expected" ]; then
@@ -80,6 +75,7 @@ if [ -e "$input.stdout.expected" ]; then
 else
   stdout_expected="/dev/null"
 fi
+
 if [ -e "$input.stderr.expected" ]; then
   stderr_expected="$input.stderr.expected"
 
@@ -101,6 +97,6 @@ fi
 
 # If there are any differences, diff will return a non-zero exit status, and
 # since this script uses "set -e", it will return a non-zero exit status too.
-diff -u "$stderr_expected" "$stderr_observed"
-diff -u "$stdout_expected" "$stdout_observed"
-diff -u "$exit_status_expected" "$exit_status_observed"
+diff --ignore-space-change -u "$stderr_expected" "$stderr_observed"
+diff --ignore-space-change -u "$stdout_expected" "$stdout_observed"
+diff --ignore-space-change -u "$exit_status_expected" "$exit_status_observed"

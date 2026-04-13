@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 cat \
-    | sed -e 's/main module `assert-fail\.c\.[^`]*\.wasm`/main module `assert-fail.c.---.wasm`/' \
-    | sed -e 's/source location: @[[:xdigit:]]*$/source location: @----/' \
-    | head -n 7
+    | sed -e 's/main module `.*assert-fail\.c\.wasm`/main module `assert-fail.c.---.wasm`/' \
+    | sed -e 's/failed to invoke.*/failed to invoke ---/' \
+    | sed -e 's/Assertion failed: false (.*assert-fail.c/Assertion failed: false (assert-fail.c/' \
+    | sed -E '/0x[[:xdigit:]]+/d'
