@@ -142,8 +142,13 @@
         BUILD_SHARED=OFF disables .so builds so we don't need a compiler-rt builtins
         library available at libc-build time. CHECK_SYMBOLS=OFF and BUILD_TESTS=OFF
         keep the build to just the static libc the dotnet sysroot needs.
+
+        Generator is "Unix Makefiles" (not Ninja) because the cbl-mariner-2.0-cross
+        CI container does not ship Ninja. CMAKE_ASM_COMPILER points at the same clang
+        as CMAKE_C_COMPILER because wasi-libc declares ASM as a project language and
+        CMake's auto-detection cannot resolve an assembler for the wasm32 target.
       -->
-      <_WasiLibcCommonCMakeArgs>-DCMAKE_C_COMPILER=$(_UnixBuildLLVM)/bin/clang -DCMAKE_AR=$(_UnixBuildLLVM)/bin/llvm-ar -DCMAKE_NM=$(_UnixBuildLLVM)/bin/llvm-nm -DCMAKE_RANLIB=$(_UnixBuildLLVM)/bin/llvm-ranlib -DCMAKE_INSTALL_PREFIX=$(_UnixSysrootDir) -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=OFF -DCHECK_SYMBOLS=OFF -DBUILD_TESTS=OFF</_WasiLibcCommonCMakeArgs>
+      <_WasiLibcCommonCMakeArgs>-DCMAKE_C_COMPILER=$(_UnixBuildLLVM)/bin/clang -DCMAKE_ASM_COMPILER=$(_UnixBuildLLVM)/bin/clang -DCMAKE_AR=$(_UnixBuildLLVM)/bin/llvm-ar -DCMAKE_NM=$(_UnixBuildLLVM)/bin/llvm-nm -DCMAKE_RANLIB=$(_UnixBuildLLVM)/bin/llvm-ranlib -DCMAKE_INSTALL_PREFIX=$(_UnixSysrootDir) -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=OFF -DCHECK_SYMBOLS=OFF -DBUILD_TESTS=OFF</_WasiLibcCommonCMakeArgs>
     </PropertyGroup>
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)src/wasi-libc"
       Command="git apply --ignore-whitespace $(MSBuildThisFileDirectory)eng/wasi-libc.patch"
