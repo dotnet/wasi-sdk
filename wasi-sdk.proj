@@ -83,7 +83,46 @@
     <Message Importance="High" Text="** (These values should differ for cross-compilation)" />
   </Target>
 
-  <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree">
+  <!--
+    Download a portable CMake >= 3.26 if the system CMake is too old. wasi-libc's
+    CMakeLists.txt requires CMake 3.26, but the cbl-mariner-2.0-cross-amd64
+    container used by wasi-sdk-ci only ships CMake 3.21.4. The official kitware
+    binary tarballs run on any Linux/macOS/Windows host.
+  -->
+  <Target Name="EnsureCMake" BeforeTargets="BuildLibc">
+    <PropertyGroup>
+      <_CMakeVersion>3.31.5</_CMakeVersion>
+      <_LocalCMakeDir>$(ArtifactsObjDir)cmake-$(_CMakeVersion)</_LocalCMakeDir>
+      <_LocalCMakeBin Condition="'$(MonoLLVMHostOS)' == 'linux'">$(_LocalCMakeDir)/cmake-$(_CMakeVersion)-linux-x86_64/bin</_LocalCMakeBin>
+      <_LocalCMakeBin Condition="'$(MonoLLVMHostOS)' == 'osx'">$(_LocalCMakeDir)/cmake-$(_CMakeVersion)-macos-universal/CMake.app/Contents/bin</_LocalCMakeBin>
+      <_LocalCMakeBin Condition="'$(MonoLLVMHostOS)' == 'win'">$(_LocalCMakeDir)/cmake-$(_CMakeVersion)-windows-x86_64/bin</_LocalCMakeBin>
+      <_CMakeTarballName Condition="'$(MonoLLVMHostOS)' == 'linux'">cmake-$(_CMakeVersion)-linux-x86_64.tar.gz</_CMakeTarballName>
+      <_CMakeTarballName Condition="'$(MonoLLVMHostOS)' == 'osx'">cmake-$(_CMakeVersion)-macos-universal.tar.gz</_CMakeTarballName>
+      <_CMakeTarballName Condition="'$(MonoLLVMHostOS)' == 'win'">cmake-$(_CMakeVersion)-windows-x86_64.zip</_CMakeTarballName>
+      <_CMakeUrl>https://github.com/Kitware/CMake/releases/download/v$(_CMakeVersion)/$(_CMakeTarballName)</_CMakeUrl>
+    </PropertyGroup>
+    <!-- Probe the system cmake and only download if it's older than 3.26. -->
+    <Exec Command="cmake --version | awk '/cmake version/ { split($3, v, &quot;.&quot;); if (v[1] &gt; 3 || (v[1] == 3 &amp;&amp; v[2] &gt;= 26)) exit 0; exit 1; }'"
+          ContinueOnError="true" IgnoreExitCode="true" Condition="'$(MonoLLVMHostOS)' != 'win'">
+      <Output TaskParameter="ExitCode" PropertyName="_SystemCMakeOk" />
+    </Exec>
+    <PropertyGroup>
+      <_NeedDownloadedCMake Condition="'$(MonoLLVMHostOS)' == 'win'">false</_NeedDownloadedCMake>
+      <_NeedDownloadedCMake Condition="'$(MonoLLVMHostOS)' != 'win' and '$(_SystemCMakeOk)' != '0'">true</_NeedDownloadedCMake>
+    </PropertyGroup>
+    <MakeDir Directories="$(_LocalCMakeDir)" Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake')" />
+    <DownloadFile SourceUrl="$(_CMakeUrl)" DestinationFolder="$(_LocalCMakeDir)" DestinationFileName="$(_CMakeTarballName)"
+                  Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake')" />
+    <Exec Command="tar -xzf '$(_LocalCMakeDir)/$(_CMakeTarballName)' -C '$(_LocalCMakeDir)'"
+          Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake')" />
+    <PropertyGroup>
+      <_CMakeExe Condition="'$(_NeedDownloadedCMake)' == 'true'">$(_LocalCMakeBin)/cmake</_CMakeExe>
+      <_CMakeExe Condition="'$(_NeedDownloadedCMake)' != 'true'">cmake</_CMakeExe>
+    </PropertyGroup>
+    <Message Importance="High" Text="** Using CMake: $(_CMakeExe)" />
+  </Target>
+
+  <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree" DependsOnTargets="EnsureCMake">
     <Error Condition="'$(MonoLLVMHostOS)' == 'win' and !Exists('$(MsysDir)')" Text="Error: You need to set the MsysDir environment variable pointing to the MSYS2 install root." />
     <PropertyGroup>
       <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">/$(BuildLLVM.Replace('\','/').Replace(':',''))</_UnixBuildLLVM>
@@ -111,28 +150,28 @@
       IgnoreStandardErrorWarningFormat="true"/>
     <!-- wasm32-wasip1 (single-threaded) -->
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)cmake -G Ninja -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1 -DTARGET_TRIPLE=wasm32-wasip1 $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) -G Ninja -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1 -DTARGET_TRIPLE=wasm32-wasip1 $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)cmake --build $(_UnixLibcBuildDir)/wasm32-wasip1 --target sysroot$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) --build $(_UnixLibcBuildDir)/wasm32-wasip1 --target sysroot$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)cmake --install $(_UnixLibcBuildDir)/wasm32-wasip1$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) --install $(_UnixLibcBuildDir)/wasm32-wasip1$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <!-- wasm32-wasip1-threads -->
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)cmake -G Ninja -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1-threads -DTARGET_TRIPLE=wasm32-wasip1-threads $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) -G Ninja -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1-threads -DTARGET_TRIPLE=wasm32-wasip1-threads $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)cmake --build $(_UnixLibcBuildDir)/wasm32-wasip1-threads --target sysroot$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) --build $(_UnixLibcBuildDir)/wasm32-wasip1-threads --target sysroot$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)cmake --install $(_UnixLibcBuildDir)/wasm32-wasip1-threads$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) --install $(_UnixLibcBuildDir)/wasm32-wasip1-threads$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
   </Target>
