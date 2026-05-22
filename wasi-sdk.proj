@@ -94,16 +94,45 @@
       <_UnixLibcBuildDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(LibcBuildDir)</_UnixLibcBuildDir>
       <_MSysBinPrefix Condition="'$(MonoLLVMHostOS)' == 'win'">$(MsysDir)\usr\bin\bash -lc '</_MSysBinPrefix>
       <_MSysBinSuffix Condition="'$(MonoLLVMHostOS)' == 'win'">'</_MSysBinSuffix>
+      <!--
+        wasi-libc switched from Makefile to CMake in upstream PR #685 (commit 688a685),
+        included starting with the wasi-libc snapshot used by wasi-sdk-32. Each variant
+        (wasip1, wasip1-threads, ...) is built with its own CMake configure + build +
+        install pass that mirrors how upstream wasi-sdk's wasi-sdk-sysroot.cmake invokes it.
+
+        BUILD_SHARED=OFF disables .so builds so we don't need a compiler-rt builtins
+        library available at libc-build time. CHECK_SYMBOLS=OFF and BUILD_TESTS=OFF
+        keep the build to just the static libc the dotnet sysroot needs.
+      -->
+      <_WasiLibcCommonCMakeArgs>-DCMAKE_C_COMPILER=$(_UnixBuildLLVM)/bin/clang -DCMAKE_AR=$(_UnixBuildLLVM)/bin/llvm-ar -DCMAKE_NM=$(_UnixBuildLLVM)/bin/llvm-nm -DCMAKE_RANLIB=$(_UnixBuildLLVM)/bin/llvm-ranlib -DCMAKE_INSTALL_PREFIX=$(_UnixSysrootDir) -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=OFF -DCHECK_SYMBOLS=OFF -DBUILD_TESTS=OFF</_WasiLibcCommonCMakeArgs>
     </PropertyGroup>
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)src/wasi-libc"
       Command="git apply --ignore-whitespace $(MSBuildThisFileDirectory)eng/wasi-libc.patch"
       IgnoreStandardErrorWarningFormat="true"/>
+    <!-- wasm32-wasip1 (single-threaded) -->
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir)$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)cmake -G Ninja -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1 -DTARGET_TRIPLE=wasm32-wasip1 $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir) THREAD_MODEL=posix$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)cmake --build $(_UnixLibcBuildDir)/wasm32-wasip1 --target sysroot$(_MSysBinSuffix)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="$(_MSysBinPrefix)cmake --install $(_UnixLibcBuildDir)/wasm32-wasip1$(_MSysBinSuffix)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
+    <!-- wasm32-wasip1-threads -->
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="$(_MSysBinPrefix)cmake -G Ninja -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1-threads -DTARGET_TRIPLE=wasm32-wasip1-threads $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="$(_MSysBinPrefix)cmake --build $(_UnixLibcBuildDir)/wasm32-wasip1-threads --target sysroot$(_MSysBinSuffix)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="$(_MSysBinPrefix)cmake --install $(_UnixLibcBuildDir)/wasm32-wasip1-threads$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
   </Target>
