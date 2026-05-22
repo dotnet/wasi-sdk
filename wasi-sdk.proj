@@ -107,16 +107,24 @@
       <Output TaskParameter="ExitCode" PropertyName="_SystemCMakeOk" />
     </Exec>
     <PropertyGroup>
-      <_NeedDownloadedCMake Condition="'$(MonoLLVMHostOS)' == 'win'">false</_NeedDownloadedCMake>
+      <!-- On Windows the MSYS2 bash that wraps the cmake invocation does not
+           inherit cmake on its PATH (it inherits make but not cmake), so we
+           always download the portable distribution. On Linux/macOS the system
+           cmake is used when it satisfies the >=3.26 minimum probed above. -->
+      <_NeedDownloadedCMake Condition="'$(MonoLLVMHostOS)' == 'win'">true</_NeedDownloadedCMake>
       <_NeedDownloadedCMake Condition="'$(MonoLLVMHostOS)' != 'win' and '$(_SystemCMakeOk)' != '0'">true</_NeedDownloadedCMake>
     </PropertyGroup>
     <MakeDir Directories="$(_LocalCMakeDir)" Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake')" />
     <DownloadFile SourceUrl="$(_CMakeUrl)" DestinationFolder="$(_LocalCMakeDir)" DestinationFileName="$(_CMakeTarballName)"
                   Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake')" />
     <Exec Command="tar -xzf '$(_LocalCMakeDir)/$(_CMakeTarballName)' -C '$(_LocalCMakeDir)'"
-          Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake')" />
+          Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake') and '$(MonoLLVMHostOS)' != 'win'" />
+    <!-- Windows: extract the zip via PowerShell -->
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;Expand-Archive -Force '$(_LocalCMakeDir)/$(_CMakeTarballName)' '$(_LocalCMakeDir)'&quot;"
+          Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake') and '$(MonoLLVMHostOS)' == 'win'" />
     <PropertyGroup>
-      <_CMakeExe Condition="'$(_NeedDownloadedCMake)' == 'true'">$(_LocalCMakeBin)/cmake</_CMakeExe>
+      <_CMakeExe Condition="'$(_NeedDownloadedCMake)' == 'true' and '$(MonoLLVMHostOS)' == 'win'">/$(_LocalCMakeBin.Replace('\','/').Replace(':',''))/cmake.exe</_CMakeExe>
+      <_CMakeExe Condition="'$(_NeedDownloadedCMake)' == 'true' and '$(MonoLLVMHostOS)' != 'win'">$(_LocalCMakeBin)/cmake</_CMakeExe>
       <_CMakeExe Condition="'$(_NeedDownloadedCMake)' != 'true'">cmake</_CMakeExe>
     </PropertyGroup>
     <Message Importance="High" Text="** Using CMake: $(_CMakeExe)" />
