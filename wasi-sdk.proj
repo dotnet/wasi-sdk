@@ -292,8 +292,8 @@
       <_LibCxxBuildArgs Include="-DCMAKE_SYSROOT=$(_UnixSysrootDir)" />
       <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(WasiVersion)'"/>
       <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(WasiVersion)'"/>
-      <_LibCxxBuildArgs Include="-DLIBCXX_LIBDIR_SUFFIX=/wasm32-wasi" />
-      <_LibCxxBuildArgs Include="-DLIBCXXABI_LIBDIR_SUFFIX=/wasm32-wasi" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_LIBDIR_SUFFIX=/wasm32-wasip1" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_LIBDIR_SUFFIX=/wasm32-wasip1" />
       <_LibCxxBuildArgs Include='-DLLVM_ENABLE_RUNTIMES="libcxx%3Blibcxxabi"' />
     </ItemGroup>
     <PropertyGroup>
