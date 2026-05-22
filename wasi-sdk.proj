@@ -155,7 +155,7 @@
       IgnoreStandardErrorWarningFormat="true"/>
     <!-- wasm32-wasip1 (single-threaded) -->
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)$(_CMakeExe) -G Ninja -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1 -DTARGET_TRIPLE=wasm32-wasip1 $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) -G &quot;Unix Makefiles&quot; -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1 -DTARGET_TRIPLE=wasm32-wasip1 $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
@@ -168,7 +168,7 @@
       EnvironmentVariables="CHERE_INVOKING=1" />
     <!-- wasm32-wasip1-threads -->
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)$(_CMakeExe) -G Ninja -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1-threads -DTARGET_TRIPLE=wasm32-wasip1-threads $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) -G &quot;Unix Makefiles&quot; -S src/wasi-libc -B $(_UnixLibcBuildDir)/wasm32-wasip1-threads -DTARGET_TRIPLE=wasm32-wasip1-threads $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
