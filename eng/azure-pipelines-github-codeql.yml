@@ -1,0 +1,82 @@
+# Create this pipeline in `dnceng/internal` against the GitHub repository
+# `dotnet/wasi-sdk` so GitHub-attributed CodeQL snapshots stay separate from
+# the existing ADO-mirror pipeline in `eng/azure-pipelines.yml`.
+# After merge, create that ADO definition to point to this file and queue one
+# `dotnet/main` run to seed the initial GitHub-attributed snapshots.
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - dotnet/main
+
+pr: none
+
+schedules:
+- cron: 0 0 * * 0
+  displayName: Weekly CodeQL refresh
+  branches:
+    include:
+    - dotnet/main
+  always: true
+
+variables:
+- template: /eng/common-variables.yml@self
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    sdl:
+      git:
+        submodules: false # Build_Linux_x64 checks out submodules recursively.
+      codeql:
+        compiled:
+          enabled: true
+        runSourceLanguagesInSourceAnalysis: true
+        sourceLanguages: python
+        binaryLanguages: cpp
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022
+        os: windows
+    containers:
+      mariner20crossamd64:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
+    stages:
+    - stage: build
+      displayName: CodeQL
+      jobs:
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          jobs:
+
+          ############ LINUX x64 BUILD ############
+          - job: Build_Linux_x64
+            displayName: Linux_x64
+            timeoutInMinutes: 480
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: build.azurelinux.3.amd64
+              os: linux
+            container: mariner20crossamd64
+            preSteps:
+            - checkout: self
+              submodules: recursive
+
+            steps:
+            - script: |
+                git clean -ffdx
+                git reset --hard HEAD
+              displayName: Clean up working directory
+
+            - bash: |
+                ./build.sh --ci --restore --build --pack --arch x64 --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=linux /p:PlatformName=x64 /p:PackageRID=linux-x64 /p:RestoreUsingNuGetTargets=false
+              displayName: Build and package
