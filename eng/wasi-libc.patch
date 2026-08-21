@@ -1,3 +1,13 @@
+diff --git a/Makefile b/Makefile
+--- a/Makefile
++++ b/Makefile
+@@ -307,5 +307,6 @@ CFLAGS += -fno-trapping-math
+ # Add all warnings, but disable a few which occur in third-party code.
+ CFLAGS += -Wall -Wextra -Werror \
++  -Wno-error=deprecated \
+   -Wno-null-pointer-arithmetic \
+   -Wno-unused-parameter \
+   -Wno-sign-compare \
 diff --git a/expected/wasm32-wasi-threads/predefined-macros.txt b/expected/wasm32-wasi-threads/predefined-macros.txt
 index a9f2982..db4a1d5 100644
 --- a/expected/wasm32-wasi-threads/predefined-macros.txt
