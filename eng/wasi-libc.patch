@@ -21,6 +21,21 @@ diff --git a/libc-top-half/musl/src/stdio/vfprintf.c b/libc-top-half/musl/src/st
 +};
 +
  static char *fmt_x(uintmax_t x, char *s, int lower)
+diff --git a/libc-top-half/musl/src/locale/pleval.c b/libc-top-half/musl/src/locale/pleval.c
+index 04da1c4..cb24bb3 100644
+--- a/libc-top-half/musl/src/locale/pleval.c
++++ b/libc-top-half/musl/src/locale/pleval.c
+@@ -87,8 +87,8 @@ static int binop(struct st *st, int op, unsigned long left)
+ 
+ static const char *parseop(struct st *st, const char *s)
+ {
+-	static const char opch[11] = "|&=!><+-*%/";
+-	static const char opch2[6] = "|&====";
++	static const char opch[12] = "|&=!><+-*%/";
++	static const char opch2[7] = "|&====";
+ 	int i;
+ 	for (i=0; i<11; i++)
+ 		if (*s == opch[i]) {
 diff --git a/expected/wasm32-wasi-threads/predefined-macros.txt b/expected/wasm32-wasi-threads/predefined-macros.txt
 index a9f2982..db4a1d5 100644
 --- a/expected/wasm32-wasi-threads/predefined-macros.txt
