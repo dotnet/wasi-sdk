@@ -1,43 +1,17 @@
 diff --git a/Makefile b/Makefile
+index 8084ea8..2d97dae 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -307,5 +307,6 @@ CFLAGS += -fno-trapping-math
+@@ -306,6 +306,7 @@ ASMFLAGS += --target=$(TARGET_TRIPLE)
+ CFLAGS += -fno-trapping-math
  # Add all warnings, but disable a few which occur in third-party code.
  CFLAGS += -Wall -Wextra -Werror \
 +  -Wno-error=deprecated \
    -Wno-null-pointer-arithmetic \
    -Wno-unused-parameter \
    -Wno-sign-compare \
-diff --git a/libc-top-half/musl/src/stdio/vfprintf.c b/libc-top-half/musl/src/stdio/vfprintf.c
---- a/libc-top-half/musl/src/stdio/vfprintf.c
-+++ b/libc-top-half/musl/src/stdio/vfprintf.c
-@@ -169,5 +169,5 @@
--static const char xdigits[16] = {
--	"0123456789ABCDEF"
--};
--
-+static const char xdigits[17] = {
-+	"0123456789ABCDEF"
-+};
-+
- static char *fmt_x(uintmax_t x, char *s, int lower)
-diff --git a/libc-top-half/musl/src/locale/pleval.c b/libc-top-half/musl/src/locale/pleval.c
-index 04da1c4..cb24bb3 100644
---- a/libc-top-half/musl/src/locale/pleval.c
-+++ b/libc-top-half/musl/src/locale/pleval.c
-@@ -87,8 +87,8 @@ static int binop(struct st *st, int op, unsigned long left)
- 
- static const char *parseop(struct st *st, const char *s)
- {
--	static const char opch[11] = "|&=!><+-*%/";
--	static const char opch2[6] = "|&====";
-+	static const char opch[12] = "|&=!><+-*%/";
-+	static const char opch2[7] = "|&====";
- 	int i;
- 	for (i=0; i<11; i++)
- 		if (*s == opch[i]) {
 diff --git a/expected/wasm32-wasi-threads/predefined-macros.txt b/expected/wasm32-wasi-threads/predefined-macros.txt
-index a9f2982..db4a1d5 100644
+index a9f2982..2122deb 100644
 --- a/expected/wasm32-wasi-threads/predefined-macros.txt
 +++ b/expected/wasm32-wasi-threads/predefined-macros.txt
 @@ -2422,6 +2422,7 @@
@@ -67,7 +41,7 @@ index a9f2982..db4a1d5 100644
  #define __compiler_ATOMIC_BOOL_LOCK_FREE 2
  #define __compiler_ATOMIC_CHAR16_T_LOCK_FREE 2
  #define __compiler_ATOMIC_CHAR32_T_LOCK_FREE 2
-@@ -2518,6 +2530,8 @@
+@@ -2518,30 +2530,37 @@
  #define __compiler_ATOMIC_SHORT_LOCK_FREE 2
  #define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
  #define __compiler_ATOMIC_WCHAR_T_LOCK_FREE 2
@@ -76,7 +50,36 @@ index a9f2982..db4a1d5 100644
  #define __GNUC_STDC_INLINE__ 1
  #define __GNUC_VA_LIST 1
  #define __GXX_ABI_VERSION 1002
-@@ -2605,11 +2619,17 @@
+ #define __ILP32__ 1
++#define __INT16_C(c) c
+ #define __INT16_C_SUFFIX__ 
+ #define __INT16_FMTd__ "hd"
+ #define __INT16_FMTi__ "hi"
+ #define __INT16_MAX__ 32767
+ #define __INT16_TYPE__ short
++#define __INT32_C(c) c
+ #define __INT32_C_SUFFIX__ 
+ #define __INT32_FMTd__ "d"
+ #define __INT32_FMTi__ "i"
+ #define __INT32_MAX__ 2147483647
+ #define __INT32_TYPE__ int
++#define __INT64_C(c) c##LL
+ #define __INT64_C_SUFFIX__ LL
+ #define __INT64_FMTd__ "lld"
+ #define __INT64_FMTi__ "lli"
+ #define __INT64_MAX__ 9223372036854775807LL
+ #define __INT64_TYPE__ long long int
++#define __INT8_C(c) c
+ #define __INT8_C_SUFFIX__ 
+ #define __INT8_FMTd__ "hhd"
+ #define __INT8_FMTi__ "hhi"
+ #define __INT8_MAX__ 127
+ #define __INT8_TYPE__ signed char
++#define __INTMAX_C(c) c##LL
+ #define __INTMAX_C_SUFFIX__ LL
+ #define __INTMAX_FMTd__ "lld"
+ #define __INTMAX_FMTi__ "lli"
+@@ -2605,11 +2624,18 @@
  #define __LDBL_MIN_10_EXP__ (-4931)
  #define __LDBL_MIN_EXP__ (-16381)
  #define __LDBL_MIN__ 3.36210314311209350626267781732175260e-4932L
@@ -86,6 +89,7 @@ index a9f2982..db4a1d5 100644
  #define __LONG_LONG_MAX__ 9223372036854775807LL
  #define __LONG_MAX __LONG_MAX__
  #define __LONG_MAX__ 2147483647L
++#define __MEMORY_SCOPE_CLUSTR 5
 +#define __MEMORY_SCOPE_DEVICE 1
 +#define __MEMORY_SCOPE_SINGLE 4
 +#define __MEMORY_SCOPE_SYSTEM 0
@@ -94,7 +98,15 @@ index a9f2982..db4a1d5 100644
  #define __NAMESER 19991006
  #define __NEED_FILE 
  #define __NEED___isoc_va_list 
-@@ -2729,6 +2749,9 @@
+@@ -2707,6 +2733,7 @@
+ #define __SHRT_MAX__ 32767
+ #define __SID ('S' << 8)
+ #define __SIG_ATOMIC_MAX__ 2147483647L
++#define __SIG_ATOMIC_MIN__ (-__SIG_ATOMIC_MAX__ - 1)
+ #define __SIG_ATOMIC_WIDTH__ 32
+ #define __SIZEOF_DOUBLE__ 8
+ #define __SIZEOF_FLOAT__ 4
+@@ -2729,6 +2756,9 @@
  #define __SIZE_TYPE__ long unsigned int
  #define __SIZE_WIDTH__ 32
  #define __STDARG_H 
@@ -104,7 +116,59 @@ index a9f2982..db4a1d5 100644
  #define __STDC_HOSTED__ 1
  #define __STDC_IEC_559__ 1
  #define __STDC_ISO_10646__ 201206L
-@@ -3025,7 +3048,7 @@
+@@ -2752,6 +2782,7 @@
+ #define __UAPI_DEF_IP_MREQ 0
+ #define __UAPI_DEF_SOCKADDR_IN 0
+ #define __UAPI_DEF_SOCKADDR_IN6 0
++#define __UINT16_C(c) c
+ #define __UINT16_C_SUFFIX__ 
+ #define __UINT16_FMTX__ "hX"
+ #define __UINT16_FMTo__ "ho"
+@@ -2759,6 +2790,7 @@
+ #define __UINT16_FMTx__ "hx"
+ #define __UINT16_MAX__ 65535
+ #define __UINT16_TYPE__ unsigned short
++#define __UINT32_C(c) c##U
+ #define __UINT32_C_SUFFIX__ U
+ #define __UINT32_FMTX__ "X"
+ #define __UINT32_FMTo__ "o"
+@@ -2766,6 +2798,7 @@
+ #define __UINT32_FMTx__ "x"
+ #define __UINT32_MAX__ 4294967295U
+ #define __UINT32_TYPE__ unsigned int
++#define __UINT64_C(c) c##ULL
+ #define __UINT64_C_SUFFIX__ ULL
+ #define __UINT64_FMTX__ "llX"
+ #define __UINT64_FMTo__ "llo"
+@@ -2773,6 +2806,7 @@
+ #define __UINT64_FMTx__ "llx"
+ #define __UINT64_MAX__ 18446744073709551615ULL
+ #define __UINT64_TYPE__ long long unsigned int
++#define __UINT8_C(c) c
+ #define __UINT8_C_SUFFIX__ 
+ #define __UINT8_FMTX__ "hhX"
+ #define __UINT8_FMTo__ "hho"
+@@ -2780,6 +2814,7 @@
+ #define __UINT8_FMTx__ "hhx"
+ #define __UINT8_MAX__ 255
+ #define __UINT8_TYPE__ unsigned char
++#define __UINTMAX_C(c) c##ULL
+ #define __UINTMAX_C_SUFFIX__ ULL
+ #define __UINTMAX_FMTX__ "llX"
+ #define __UINTMAX_FMTo__ "llo"
+@@ -3000,9 +3035,11 @@
+ #define __WASI_WHENCE_END (UINT8_C(2))
+ #define __WASI_WHENCE_SET (UINT8_C(0))
+ #define __WCHAR_MAX__ 2147483647
++#define __WCHAR_MIN__ (-__WCHAR_MAX__ - 1)
+ #define __WCHAR_TYPE__ int
+ #define __WCHAR_WIDTH__ 32
+ #define __WINT_MAX__ 2147483647
++#define __WINT_MIN__ (-__WINT_MAX__ - 1)
+ #define __WINT_TYPE__ int
+ #define __WINT_WIDTH__ 32
+ #define __WORDSIZE 64
+@@ -3025,7 +3062,7 @@
  #define __tg_real_remquo(x,y,z) (__RETCAST_2(x, y)( __FLT(x) && __FLT(y) ? remquof(x, y, z) : __LDBL((x)+(y)) ? remquol(x, y, z) : remquo(x, y, z) ))
  #define __tm_gmtoff tm_gmtoff
  #define __tm_zone tm_zone
@@ -113,11 +177,20 @@ index a9f2982..db4a1d5 100644
  #define __wasi__ 1
  #define __wasi_api_h 
  #define __wasi_libc_environ_h 
-@@ -3100,6 +3123,8 @@
+@@ -3094,12 +3131,17 @@
+ #define __wasilibc___typedef_suseconds_t_h 
+ #define __wasilibc___typedef_time_t_h 
+ #define __wasilibc___typedef_uid_t_h 
++#define __wasip1__ 1
+ #define __wasm 1
+ #define __wasm32 1
+ #define __wasm32__ 1
  #define __wasm__ 1
  #define __wasm_atomics__ 1
  #define __wasm_bulk_memory__ 1
++#define __wasm_bulk_memory_opt__ 1
 +#define __wasm_multivalue__ 1
++#define __wasm_nontrapping_fptoint__ 1
 +#define __wasm_reference_types__ 1
  #define _tolower(a) ((a)|0x20)
  #define _toupper(a) ((a)&0x5f)
@@ -135,7 +208,7 @@ index a685151..33215bf 100644
  __lttf2
  __main_argc_argv
 diff --git a/expected/wasm32-wasi/predefined-macros.txt b/expected/wasm32-wasi/predefined-macros.txt
-index 234ad3c..81c3ea9 100644
+index 234ad3c..4236935 100644
 --- a/expected/wasm32-wasi/predefined-macros.txt
 +++ b/expected/wasm32-wasi/predefined-macros.txt
 @@ -2385,6 +2385,7 @@
@@ -165,7 +238,7 @@ index 234ad3c..81c3ea9 100644
  #define __compiler_ATOMIC_BOOL_LOCK_FREE 2
  #define __compiler_ATOMIC_CHAR16_T_LOCK_FREE 2
  #define __compiler_ATOMIC_CHAR32_T_LOCK_FREE 2
-@@ -2481,6 +2493,8 @@
+@@ -2481,30 +2493,37 @@
  #define __compiler_ATOMIC_SHORT_LOCK_FREE 2
  #define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
  #define __compiler_ATOMIC_WCHAR_T_LOCK_FREE 2
@@ -174,7 +247,36 @@ index 234ad3c..81c3ea9 100644
  #define __GNUC_STDC_INLINE__ 1
  #define __GNUC_VA_LIST 1
  #define __GXX_ABI_VERSION 1002
-@@ -2568,11 +2582,17 @@
+ #define __ILP32__ 1
++#define __INT16_C(c) c
+ #define __INT16_C_SUFFIX__ 
+ #define __INT16_FMTd__ "hd"
+ #define __INT16_FMTi__ "hi"
+ #define __INT16_MAX__ 32767
+ #define __INT16_TYPE__ short
++#define __INT32_C(c) c
+ #define __INT32_C_SUFFIX__ 
+ #define __INT32_FMTd__ "d"
+ #define __INT32_FMTi__ "i"
+ #define __INT32_MAX__ 2147483647
+ #define __INT32_TYPE__ int
++#define __INT64_C(c) c##LL
+ #define __INT64_C_SUFFIX__ LL
+ #define __INT64_FMTd__ "lld"
+ #define __INT64_FMTi__ "lli"
+ #define __INT64_MAX__ 9223372036854775807LL
+ #define __INT64_TYPE__ long long int
++#define __INT8_C(c) c
+ #define __INT8_C_SUFFIX__ 
+ #define __INT8_FMTd__ "hhd"
+ #define __INT8_FMTi__ "hhi"
+ #define __INT8_MAX__ 127
+ #define __INT8_TYPE__ signed char
++#define __INTMAX_C(c) c##LL
+ #define __INTMAX_C_SUFFIX__ LL
+ #define __INTMAX_FMTd__ "lld"
+ #define __INTMAX_FMTi__ "lli"
+@@ -2568,11 +2587,18 @@
  #define __LDBL_MIN_10_EXP__ (-4931)
  #define __LDBL_MIN_EXP__ (-16381)
  #define __LDBL_MIN__ 3.36210314311209350626267781732175260e-4932L
@@ -184,6 +286,7 @@ index 234ad3c..81c3ea9 100644
  #define __LONG_LONG_MAX__ 9223372036854775807LL
  #define __LONG_MAX __LONG_MAX__
  #define __LONG_MAX__ 2147483647L
++#define __MEMORY_SCOPE_CLUSTR 5
 +#define __MEMORY_SCOPE_DEVICE 1
 +#define __MEMORY_SCOPE_SINGLE 4
 +#define __MEMORY_SCOPE_SYSTEM 0
@@ -192,7 +295,15 @@ index 234ad3c..81c3ea9 100644
  #define __NAMESER 19991006
  #define __NEED_FILE 
  #define __NEED___isoc_va_list 
-@@ -2692,6 +2712,9 @@
+@@ -2670,6 +2696,7 @@
+ #define __SHRT_MAX__ 32767
+ #define __SID ('S' << 8)
+ #define __SIG_ATOMIC_MAX__ 2147483647L
++#define __SIG_ATOMIC_MIN__ (-__SIG_ATOMIC_MAX__ - 1)
+ #define __SIG_ATOMIC_WIDTH__ 32
+ #define __SIZEOF_DOUBLE__ 8
+ #define __SIZEOF_FLOAT__ 4
+@@ -2692,6 +2719,9 @@
  #define __SIZE_TYPE__ long unsigned int
  #define __SIZE_WIDTH__ 32
  #define __STDARG_H 
@@ -202,7 +313,59 @@ index 234ad3c..81c3ea9 100644
  #define __STDC_HOSTED__ 1
  #define __STDC_IEC_559__ 1
  #define __STDC_ISO_10646__ 201206L
-@@ -2988,7 +3011,7 @@
+@@ -2715,6 +2745,7 @@
+ #define __UAPI_DEF_IP_MREQ 0
+ #define __UAPI_DEF_SOCKADDR_IN 0
+ #define __UAPI_DEF_SOCKADDR_IN6 0
++#define __UINT16_C(c) c
+ #define __UINT16_C_SUFFIX__ 
+ #define __UINT16_FMTX__ "hX"
+ #define __UINT16_FMTo__ "ho"
+@@ -2722,6 +2753,7 @@
+ #define __UINT16_FMTx__ "hx"
+ #define __UINT16_MAX__ 65535
+ #define __UINT16_TYPE__ unsigned short
++#define __UINT32_C(c) c##U
+ #define __UINT32_C_SUFFIX__ U
+ #define __UINT32_FMTX__ "X"
+ #define __UINT32_FMTo__ "o"
+@@ -2729,6 +2761,7 @@
+ #define __UINT32_FMTx__ "x"
+ #define __UINT32_MAX__ 4294967295U
+ #define __UINT32_TYPE__ unsigned int
++#define __UINT64_C(c) c##ULL
+ #define __UINT64_C_SUFFIX__ ULL
+ #define __UINT64_FMTX__ "llX"
+ #define __UINT64_FMTo__ "llo"
+@@ -2736,6 +2769,7 @@
+ #define __UINT64_FMTx__ "llx"
+ #define __UINT64_MAX__ 18446744073709551615ULL
+ #define __UINT64_TYPE__ long long unsigned int
++#define __UINT8_C(c) c
+ #define __UINT8_C_SUFFIX__ 
+ #define __UINT8_FMTX__ "hhX"
+ #define __UINT8_FMTo__ "hho"
+@@ -2743,6 +2777,7 @@
+ #define __UINT8_FMTx__ "hhx"
+ #define __UINT8_MAX__ 255
+ #define __UINT8_TYPE__ unsigned char
++#define __UINTMAX_C(c) c##ULL
+ #define __UINTMAX_C_SUFFIX__ ULL
+ #define __UINTMAX_FMTX__ "llX"
+ #define __UINTMAX_FMTo__ "llo"
+@@ -2963,9 +2998,11 @@
+ #define __WASI_WHENCE_END (UINT8_C(2))
+ #define __WASI_WHENCE_SET (UINT8_C(0))
+ #define __WCHAR_MAX__ 2147483647
++#define __WCHAR_MIN__ (-__WCHAR_MAX__ - 1)
+ #define __WCHAR_TYPE__ int
+ #define __WCHAR_WIDTH__ 32
+ #define __WINT_MAX__ 2147483647
++#define __WINT_MIN__ (-__WINT_MAX__ - 1)
+ #define __WINT_TYPE__ int
+ #define __WINT_WIDTH__ 32
+ #define __WORDSIZE 64
+@@ -2988,7 +3025,7 @@
  #define __tg_real_remquo(x,y,z) (__RETCAST_2(x, y)( __FLT(x) && __FLT(y) ? remquof(x, y, z) : __LDBL((x)+(y)) ? remquol(x, y, z) : remquo(x, y, z) ))
  #define __tm_gmtoff tm_gmtoff
  #define __tm_zone tm_zone
@@ -211,11 +374,19 @@ index 234ad3c..81c3ea9 100644
  #define __wasi__ 1
  #define __wasi_api_h 
  #define __wasi_libc_environ_h 
-@@ -3061,6 +3084,8 @@
+@@ -3057,10 +3094,16 @@
+ #define __wasilibc___typedef_suseconds_t_h 
+ #define __wasilibc___typedef_time_t_h 
+ #define __wasilibc___typedef_uid_t_h 
++#define __wasip1__ 1
+ #define __wasm 1
  #define __wasm32 1
  #define __wasm32__ 1
  #define __wasm__ 1
++#define __wasm_bulk_memory__ 1
++#define __wasm_bulk_memory_opt__ 1
 +#define __wasm_multivalue__ 1
++#define __wasm_nontrapping_fptoint__ 1
 +#define __wasm_reference_types__ 1
  #define _tolower(a) ((a)|0x20)
  #define _toupper(a) ((a)&0x5f)
@@ -232,3 +403,31 @@ index b9cdb34..68db1a7 100644
  __letf2
  __lttf2
  __main_argc_argv
+diff --git a/libc-top-half/musl/src/locale/pleval.c b/libc-top-half/musl/src/locale/pleval.c
+index 04da1c4..cb24bb3 100644
+--- a/libc-top-half/musl/src/locale/pleval.c
++++ b/libc-top-half/musl/src/locale/pleval.c
+@@ -87,8 +87,8 @@ static int binop(struct st *st, int op, unsigned long left)
+ 
+ static const char *parseop(struct st *st, const char *s)
+ {
+-	static const char opch[11] = "|&=!><+-*%/";
+-	static const char opch2[6] = "|&====";
++	static const char opch[12] = "|&=!><+-*%/";
++	static const char opch2[7] = "|&====";
+ 	int i;
+ 	for (i=0; i<11; i++)
+ 		if (*s == opch[i]) {
+diff --git a/libc-top-half/musl/src/stdio/vfprintf.c b/libc-top-half/musl/src/stdio/vfprintf.c
+index 7da2e50..b7bb3d5 100644
+--- a/libc-top-half/musl/src/stdio/vfprintf.c
++++ b/libc-top-half/musl/src/stdio/vfprintf.c
+@@ -166,7 +166,7 @@ static void pad(FILE *f, char c, int w, int l, int fl)
+ 	out(f, pad, l);
+ }
+ 
+-static const char xdigits[16] = {
++static const char xdigits[17] = {
+ 	"0123456789ABCDEF"
+ };
+ 
