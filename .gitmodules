@@ -1,7 +1,10 @@
 [submodule "src/llvm-project"]
-	path = src/llvm-project
-	url = https://github.com/dotnet/llvm-project
-	branch = dotnet/llvm-project
+path = src/llvm-project
+url = https://github.com/dotnet/llvm-project
+branch = dotnet/llvm-project
 [submodule "src/wasi-libc"]
-	path = src/wasi-libc
-	url = https://github.com/WebAssembly/wasi-libc
+path = src/wasi-libc
+url = https://github.com/WebAssembly/wasi-libc
+[submodule "src/config"]
+path = src/config
+url = https://git.savannah.gnu.org/git/config.git

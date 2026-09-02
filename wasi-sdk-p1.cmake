@@ -7,7 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 set(CMAKE_SYSTEM_NAME WASI)
 set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR wasm32)
-set(triple wasm32-wasi)
+set(triple wasm32-wasip1)
 
 if(WIN32)
 	set(WASI_HOST_EXE_SUFFIX ".exe")
@@ -17,7 +17,7 @@ endif()
 
 # When building from source, WASI_SDK_PREFIX represents the generated directory
 if(NOT WASI_SDK_PREFIX)
-    set(WASI_SDK_PREFIX ${CMAKE_CURRENT_LIST_DIR}/../../)
+	set(WASI_SDK_PREFIX ${CMAKE_CURRENT_LIST_DIR}/../../)
 endif()
 
 set(CMAKE_C_COMPILER ${WASI_SDK_PREFIX}/bin/clang${WASI_HOST_EXE_SUFFIX})
@@ -31,6 +31,7 @@ set(CMAKE_ASM_COMPILER_TARGET ${triple})
 
 # Don't look in the sysroot for executables to run during the build
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+
 # Only look in the sysroot (not in the host paths) for the rest
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)

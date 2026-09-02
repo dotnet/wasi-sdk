@@ -83,7 +83,54 @@
     <Message Importance="High" Text="** (These values should differ for cross-compilation)" />
   </Target>
 
-  <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree">
+  <!--
+    Download a portable CMake >= 3.26 if the system CMake is too old. wasi-libc's
+    CMakeLists.txt requires CMake 3.26, but the cbl-mariner-2.0-cross-amd64
+    container used by wasi-sdk-ci only ships CMake 3.21.4. The official kitware
+    binary tarballs run on any Linux/macOS/Windows host.
+  -->
+  <Target Name="EnsureCMake" BeforeTargets="BuildLibc">
+    <PropertyGroup>
+      <_CMakeVersion>3.31.5</_CMakeVersion>
+      <_LocalCMakeDir>$(ArtifactsObjDir)cmake-$(_CMakeVersion)</_LocalCMakeDir>
+      <_LocalCMakeBin Condition="'$(MonoLLVMHostOS)' == 'linux'">$(_LocalCMakeDir)/cmake-$(_CMakeVersion)-linux-x86_64/bin</_LocalCMakeBin>
+      <_LocalCMakeBin Condition="'$(MonoLLVMHostOS)' == 'osx'">$(_LocalCMakeDir)/cmake-$(_CMakeVersion)-macos-universal/CMake.app/Contents/bin</_LocalCMakeBin>
+      <_LocalCMakeBin Condition="'$(MonoLLVMHostOS)' == 'win'">$(_LocalCMakeDir)/cmake-$(_CMakeVersion)-windows-x86_64/bin</_LocalCMakeBin>
+      <_CMakeTarballName Condition="'$(MonoLLVMHostOS)' == 'linux'">cmake-$(_CMakeVersion)-linux-x86_64.tar.gz</_CMakeTarballName>
+      <_CMakeTarballName Condition="'$(MonoLLVMHostOS)' == 'osx'">cmake-$(_CMakeVersion)-macos-universal.tar.gz</_CMakeTarballName>
+      <_CMakeTarballName Condition="'$(MonoLLVMHostOS)' == 'win'">cmake-$(_CMakeVersion)-windows-x86_64.zip</_CMakeTarballName>
+      <_CMakeUrl>https://github.com/Kitware/CMake/releases/download/v$(_CMakeVersion)/$(_CMakeTarballName)</_CMakeUrl>
+    </PropertyGroup>
+    <!-- Probe the system cmake and only download if it's older than 3.26. -->
+    <Exec Command="cmake --version | awk '/cmake version/ { split($3, v, &quot;.&quot;); if (v[1] &gt; 3 || (v[1] == 3 &amp;&amp; v[2] &gt;= 26)) exit 0; exit 1; }'"
+          ContinueOnError="true" IgnoreExitCode="true" Condition="'$(MonoLLVMHostOS)' != 'win'">
+      <Output TaskParameter="ExitCode" PropertyName="_SystemCMakeOk" />
+    </Exec>
+    <PropertyGroup>
+      <!-- On Windows the MSYS2 bash that wraps the cmake invocation does not
+           inherit cmake on its PATH (it inherits make but not cmake), so we
+           always download the portable distribution. On Linux/macOS the system
+           cmake is used when it satisfies the >=3.26 minimum probed above. -->
+      <_NeedDownloadedCMake Condition="'$(MonoLLVMHostOS)' == 'win'">true</_NeedDownloadedCMake>
+      <_NeedDownloadedCMake Condition="'$(MonoLLVMHostOS)' != 'win' and '$(_SystemCMakeOk)' != '0'">true</_NeedDownloadedCMake>
+    </PropertyGroup>
+    <MakeDir Directories="$(_LocalCMakeDir)" Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake')" />
+    <DownloadFile SourceUrl="$(_CMakeUrl)" DestinationFolder="$(_LocalCMakeDir)" DestinationFileName="$(_CMakeTarballName)"
+                  Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake')" />
+    <Exec Command="tar -xzf '$(_LocalCMakeDir)/$(_CMakeTarballName)' -C '$(_LocalCMakeDir)'"
+          Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake') and '$(MonoLLVMHostOS)' != 'win'" />
+    <!-- Windows: extract the zip via PowerShell -->
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;Expand-Archive -Force '$(_LocalCMakeDir)/$(_CMakeTarballName)' '$(_LocalCMakeDir)'&quot;"
+          Condition="'$(_NeedDownloadedCMake)' == 'true' and !Exists('$(_LocalCMakeBin)/cmake') and '$(MonoLLVMHostOS)' == 'win'" />
+    <PropertyGroup>
+      <_CMakeExe Condition="'$(_NeedDownloadedCMake)' == 'true' and '$(MonoLLVMHostOS)' == 'win'">/$(_LocalCMakeBin.Replace('\','/').Replace(':',''))/cmake.exe</_CMakeExe>
+      <_CMakeExe Condition="'$(_NeedDownloadedCMake)' == 'true' and '$(MonoLLVMHostOS)' != 'win'">$(_LocalCMakeBin)/cmake</_CMakeExe>
+      <_CMakeExe Condition="'$(_NeedDownloadedCMake)' != 'true'">cmake</_CMakeExe>
+    </PropertyGroup>
+    <Message Importance="High" Text="** Using CMake: $(_CMakeExe)" />
+  </Target>
+
+  <Target Name="BuildLibc" AfterTargets="CopyLLVMToTree" DependsOnTargets="EnsureCMake">
     <Error Condition="'$(MonoLLVMHostOS)' == 'win' and !Exists('$(MsysDir)')" Text="Error: You need to set the MsysDir environment variable pointing to the MSYS2 install root." />
     <PropertyGroup>
       <_UnixBuildLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">/$(BuildLLVM.Replace('\','/').Replace(':',''))</_UnixBuildLLVM>
@@ -94,16 +141,69 @@
       <_UnixLibcBuildDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(LibcBuildDir)</_UnixLibcBuildDir>
       <_MSysBinPrefix Condition="'$(MonoLLVMHostOS)' == 'win'">$(MsysDir)\usr\bin\bash -lc '</_MSysBinPrefix>
       <_MSysBinSuffix Condition="'$(MonoLLVMHostOS)' == 'win'">'</_MSysBinSuffix>
+      <!-- cmake.exe on Windows is a native Win32 program that takes Windows-form
+           paths even when invoked via MSYS2 bash. Use the forward-slash Windows
+           form on Windows; use the plain native path on Unix. -->
+      <_CMakeLibcBuildDir Condition="'$(MonoLLVMHostOS)' == 'win'">$(LibcBuildDir.Replace('\','/'))</_CMakeLibcBuildDir>
+      <_CMakeLibcBuildDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(LibcBuildDir)</_CMakeLibcBuildDir>
+      <!--
+        cmake.exe on Windows is a native Win32 program that takes Windows-form
+        paths, even when we invoke it through MSYS2 bash. The MSYS2 path form
+        only applies to where bash itself locates the executable; cmake's -D
+        argument values are validated as filesystem paths and must use the
+        Windows '\' form (or forward-slash 'D:/...' form). Use forward-slash
+        Windows paths so we can substitute into the same arg string on both
+        platforms without escaping backslashes through bash.
+      -->
+      <_CMakeCompilerLLVM Condition="'$(MonoLLVMHostOS)' == 'win'">$(BuildLLVM.Replace('\','/'))</_CMakeCompilerLLVM>
+      <_CMakeCompilerLLVM Condition="'$(MonoLLVMHostOS)' != 'win'">$(BuildLLVM)</_CMakeCompilerLLVM>
+      <_CMakeSysrootDir Condition="'$(MonoLLVMHostOS)' == 'win'">$(SysrootDir.Replace('\','/'))</_CMakeSysrootDir>
+      <_CMakeSysrootDir Condition="'$(MonoLLVMHostOS)' != 'win'">$(SysrootDir)</_CMakeSysrootDir>
+      <_CMakeCompilerExeSuffix Condition="'$(MonoLLVMHostOS)' == 'win'">.exe</_CMakeCompilerExeSuffix>
+      <!--
+        wasi-libc switched from Makefile to CMake in upstream PR #685 (commit 688a685),
+        included starting with the wasi-libc snapshot used by wasi-sdk-32. Each variant
+        (wasip1, wasip1-threads, ...) is built with its own CMake configure + build +
+        install pass that mirrors how upstream wasi-sdk's wasi-sdk-sysroot.cmake invokes it.
+
+        BUILD_SHARED=OFF disables .so builds so we don't need a compiler-rt builtins
+        library available at libc-build time. CHECK_SYMBOLS=OFF and BUILD_TESTS=OFF
+        keep the build to just the static libc the dotnet sysroot needs.
+
+        Generator is "Unix Makefiles" (not Ninja) because the cbl-mariner-2.0-cross
+        CI container does not ship Ninja. CMAKE_ASM_COMPILER points at the same clang
+        as CMAKE_C_COMPILER because wasi-libc declares ASM as a project language and
+        CMake's auto-detection cannot resolve an assembler for the wasm32 target.
+      -->
+      <_WasiLibcCommonCMakeArgs>-DCMAKE_C_COMPILER=$(_CMakeCompilerLLVM)/bin/clang$(_CMakeCompilerExeSuffix) -DCMAKE_ASM_COMPILER=$(_CMakeCompilerLLVM)/bin/clang$(_CMakeCompilerExeSuffix) -DCMAKE_AR=$(_CMakeCompilerLLVM)/bin/llvm-ar$(_CMakeCompilerExeSuffix) -DCMAKE_NM=$(_CMakeCompilerLLVM)/bin/llvm-nm$(_CMakeCompilerExeSuffix) -DCMAKE_RANLIB=$(_CMakeCompilerLLVM)/bin/llvm-ranlib$(_CMakeCompilerExeSuffix) -DCMAKE_INSTALL_PREFIX=$(_CMakeSysrootDir) -DCMAKE_BUILD_TYPE=Release -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY -DBUILD_SHARED=OFF -DCHECK_SYMBOLS=OFF -DBUILD_TESTS=OFF</_WasiLibcCommonCMakeArgs>
     </PropertyGroup>
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)src/wasi-libc"
       Command="git apply --ignore-whitespace $(MSBuildThisFileDirectory)eng/wasi-libc.patch"
       IgnoreStandardErrorWarningFormat="true"/>
+    <!-- wasm32-wasip1 (single-threaded) -->
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir)$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) -G &quot;Unix Makefiles&quot; -S src/wasi-libc -B $(_CMakeLibcBuildDir)/wasm32-wasip1 -DTARGET_TRIPLE=wasm32-wasip1 $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-      Command="$(_MSysBinPrefix)make -C src/wasi-libc CC=$(_UnixBuildLLVM)/bin/clang AR=$(_UnixBuildLLVM)/bin/llvm-ar NM=$(_UnixBuildLLVM)/bin/llvm-nm SYSROOT=$(_UnixSysrootDir) OBJDIR=$(_UnixLibcBuildDir) THREAD_MODEL=posix$(_MSysBinSuffix)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) --build $(_CMakeLibcBuildDir)/wasm32-wasip1 --target sysroot$(_MSysBinSuffix)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) --install $(_CMakeLibcBuildDir)/wasm32-wasip1$(_MSysBinSuffix)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
+    <!-- wasm32-wasip1-threads -->
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) -G &quot;Unix Makefiles&quot; -S src/wasi-libc -B $(_CMakeLibcBuildDir)/wasm32-wasip1-threads -DTARGET_TRIPLE=wasm32-wasip1-threads $(_WasiLibcCommonCMakeArgs)$(_MSysBinSuffix)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) --build $(_CMakeLibcBuildDir)/wasm32-wasip1-threads --target sysroot$(_MSysBinSuffix)"
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="CHERE_INVOKING=1" />
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+      Command="$(_MSysBinPrefix)$(_CMakeExe) --install $(_CMakeLibcBuildDir)/wasm32-wasip1-threads$(_MSysBinSuffix)"
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="CHERE_INVOKING=1" />
   </Target>
@@ -211,8 +311,8 @@
       <_LibCxxBuildArgs Include="-DCMAKE_SYSROOT=$(_UnixSysrootDir)" />
       <_LibCxxBuildArgs Include="-DCMAKE_C_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(WasiVersion)'"/>
       <_LibCxxBuildArgs Include="-DCMAKE_CXX_FLAGS='-fdebug-prefix-map=$(_UnixMSBuildThisFileDirectory)=wasisdk://v$(WasiVersion)'"/>
-      <_LibCxxBuildArgs Include="-DLIBCXX_LIBDIR_SUFFIX=/wasm32-wasi" />
-      <_LibCxxBuildArgs Include="-DLIBCXXABI_LIBDIR_SUFFIX=/wasm32-wasi" />
+      <_LibCxxBuildArgs Include="-DLIBCXX_LIBDIR_SUFFIX=/wasm32-wasip1" />
+      <_LibCxxBuildArgs Include="-DLIBCXXABI_LIBDIR_SUFFIX=/wasm32-wasip1" />
       <_LibCxxBuildArgs Include='-DLLVM_ENABLE_RUNTIMES="libcxx%3Blibcxxabi"' />
     </ItemGroup>
     <PropertyGroup>
