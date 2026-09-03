@@ -14,7 +14,7 @@
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
   </PropertyGroup>
   <PropertyGroup>
-    <SwixPackageVersion>1.1.87-gba258badda</SwixPackageVersion>
+    <SwixBuildPackageVersion>1.1.922</SwixBuildPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <WorkloadSdkBandVersions Include="10.0.100" SupportsMachineArch="true" />
