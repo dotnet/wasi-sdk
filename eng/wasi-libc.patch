@@ -11,7 +11,7 @@ index 8084ea8..2d97dae 100644
    -Wno-unused-parameter \
    -Wno-sign-compare \
 diff --git a/expected/wasm32-wasi-threads/predefined-macros.txt b/expected/wasm32-wasi-threads/predefined-macros.txt
-index a9f2982..2122deb 100644
+index a9f2982..cc4fd86 100644
 --- a/expected/wasm32-wasi-threads/predefined-macros.txt
 +++ b/expected/wasm32-wasi-threads/predefined-macros.txt
 @@ -2422,6 +2422,7 @@
@@ -98,15 +98,16 @@ index a9f2982..2122deb 100644
  #define __NAMESER 19991006
  #define __NEED_FILE 
  #define __NEED___isoc_va_list 
-@@ -2707,6 +2733,7 @@
+@@ -2707,6 +2733,8 @@
  #define __SHRT_MAX__ 32767
  #define __SID ('S' << 8)
  #define __SIG_ATOMIC_MAX__ 2147483647L
 +#define __SIG_ATOMIC_MIN__ (-__SIG_ATOMIC_MAX__ - 1)
++#define __SIG_ATOMIC_TYPE__ long int
  #define __SIG_ATOMIC_WIDTH__ 32
  #define __SIZEOF_DOUBLE__ 8
  #define __SIZEOF_FLOAT__ 4
-@@ -2729,6 +2756,9 @@
+@@ -2729,6 +2757,9 @@
  #define __SIZE_TYPE__ long unsigned int
  #define __SIZE_WIDTH__ 32
  #define __STDARG_H 
@@ -116,7 +117,7 @@ index a9f2982..2122deb 100644
  #define __STDC_HOSTED__ 1
  #define __STDC_IEC_559__ 1
  #define __STDC_ISO_10646__ 201206L
-@@ -2752,6 +2782,7 @@
+@@ -2752,6 +2783,7 @@
  #define __UAPI_DEF_IP_MREQ 0
  #define __UAPI_DEF_SOCKADDR_IN 0
  #define __UAPI_DEF_SOCKADDR_IN6 0
@@ -124,7 +125,7 @@ index a9f2982..2122deb 100644
  #define __UINT16_C_SUFFIX__ 
  #define __UINT16_FMTX__ "hX"
  #define __UINT16_FMTo__ "ho"
-@@ -2759,6 +2790,7 @@
+@@ -2759,6 +2791,7 @@
  #define __UINT16_FMTx__ "hx"
  #define __UINT16_MAX__ 65535
  #define __UINT16_TYPE__ unsigned short
@@ -132,7 +133,7 @@ index a9f2982..2122deb 100644
  #define __UINT32_C_SUFFIX__ U
  #define __UINT32_FMTX__ "X"
  #define __UINT32_FMTo__ "o"
-@@ -2766,6 +2798,7 @@
+@@ -2766,6 +2799,7 @@
  #define __UINT32_FMTx__ "x"
  #define __UINT32_MAX__ 4294967295U
  #define __UINT32_TYPE__ unsigned int
@@ -140,7 +141,7 @@ index a9f2982..2122deb 100644
  #define __UINT64_C_SUFFIX__ ULL
  #define __UINT64_FMTX__ "llX"
  #define __UINT64_FMTo__ "llo"
-@@ -2773,6 +2806,7 @@
+@@ -2773,6 +2807,7 @@
  #define __UINT64_FMTx__ "llx"
  #define __UINT64_MAX__ 18446744073709551615ULL
  #define __UINT64_TYPE__ long long unsigned int
@@ -148,7 +149,7 @@ index a9f2982..2122deb 100644
  #define __UINT8_C_SUFFIX__ 
  #define __UINT8_FMTX__ "hhX"
  #define __UINT8_FMTo__ "hho"
-@@ -2780,6 +2814,7 @@
+@@ -2780,6 +2815,7 @@
  #define __UINT8_FMTx__ "hhx"
  #define __UINT8_MAX__ 255
  #define __UINT8_TYPE__ unsigned char
@@ -156,7 +157,7 @@ index a9f2982..2122deb 100644
  #define __UINTMAX_C_SUFFIX__ ULL
  #define __UINTMAX_FMTX__ "llX"
  #define __UINTMAX_FMTo__ "llo"
-@@ -3000,9 +3035,11 @@
+@@ -3000,9 +3036,11 @@
  #define __WASI_WHENCE_END (UINT8_C(2))
  #define __WASI_WHENCE_SET (UINT8_C(0))
  #define __WCHAR_MAX__ 2147483647
@@ -168,7 +169,7 @@ index a9f2982..2122deb 100644
  #define __WINT_TYPE__ int
  #define __WINT_WIDTH__ 32
  #define __WORDSIZE 64
-@@ -3025,7 +3062,7 @@
+@@ -3025,7 +3063,7 @@
  #define __tg_real_remquo(x,y,z) (__RETCAST_2(x, y)( __FLT(x) && __FLT(y) ? remquof(x, y, z) : __LDBL((x)+(y)) ? remquol(x, y, z) : remquo(x, y, z) ))
  #define __tm_gmtoff tm_gmtoff
  #define __tm_zone tm_zone
@@ -177,7 +178,7 @@ index a9f2982..2122deb 100644
  #define __wasi__ 1
  #define __wasi_api_h 
  #define __wasi_libc_environ_h 
-@@ -3094,12 +3131,17 @@
+@@ -3094,12 +3132,17 @@
  #define __wasilibc___typedef_suseconds_t_h 
  #define __wasilibc___typedef_time_t_h 
  #define __wasilibc___typedef_uid_t_h 
@@ -208,7 +209,7 @@ index a685151..33215bf 100644
  __lttf2
  __main_argc_argv
 diff --git a/expected/wasm32-wasi/predefined-macros.txt b/expected/wasm32-wasi/predefined-macros.txt
-index 234ad3c..4236935 100644
+index 234ad3c..d302668 100644
 --- a/expected/wasm32-wasi/predefined-macros.txt
 +++ b/expected/wasm32-wasi/predefined-macros.txt
 @@ -2385,6 +2385,7 @@
@@ -295,15 +296,16 @@ index 234ad3c..4236935 100644
  #define __NAMESER 19991006
  #define __NEED_FILE 
  #define __NEED___isoc_va_list 
-@@ -2670,6 +2696,7 @@
+@@ -2670,6 +2696,8 @@
  #define __SHRT_MAX__ 32767
  #define __SID ('S' << 8)
  #define __SIG_ATOMIC_MAX__ 2147483647L
 +#define __SIG_ATOMIC_MIN__ (-__SIG_ATOMIC_MAX__ - 1)
++#define __SIG_ATOMIC_TYPE__ long int
  #define __SIG_ATOMIC_WIDTH__ 32
  #define __SIZEOF_DOUBLE__ 8
  #define __SIZEOF_FLOAT__ 4
-@@ -2692,6 +2719,9 @@
+@@ -2692,6 +2720,9 @@
  #define __SIZE_TYPE__ long unsigned int
  #define __SIZE_WIDTH__ 32
  #define __STDARG_H 
@@ -313,7 +315,7 @@ index 234ad3c..4236935 100644
  #define __STDC_HOSTED__ 1
  #define __STDC_IEC_559__ 1
  #define __STDC_ISO_10646__ 201206L
-@@ -2715,6 +2745,7 @@
+@@ -2715,6 +2746,7 @@
  #define __UAPI_DEF_IP_MREQ 0
  #define __UAPI_DEF_SOCKADDR_IN 0
  #define __UAPI_DEF_SOCKADDR_IN6 0
@@ -321,7 +323,7 @@ index 234ad3c..4236935 100644
  #define __UINT16_C_SUFFIX__ 
  #define __UINT16_FMTX__ "hX"
  #define __UINT16_FMTo__ "ho"
-@@ -2722,6 +2753,7 @@
+@@ -2722,6 +2754,7 @@
  #define __UINT16_FMTx__ "hx"
  #define __UINT16_MAX__ 65535
  #define __UINT16_TYPE__ unsigned short
@@ -329,7 +331,7 @@ index 234ad3c..4236935 100644
  #define __UINT32_C_SUFFIX__ U
  #define __UINT32_FMTX__ "X"
  #define __UINT32_FMTo__ "o"
-@@ -2729,6 +2761,7 @@
+@@ -2729,6 +2762,7 @@
  #define __UINT32_FMTx__ "x"
  #define __UINT32_MAX__ 4294967295U
  #define __UINT32_TYPE__ unsigned int
@@ -337,7 +339,7 @@ index 234ad3c..4236935 100644
  #define __UINT64_C_SUFFIX__ ULL
  #define __UINT64_FMTX__ "llX"
  #define __UINT64_FMTo__ "llo"
-@@ -2736,6 +2769,7 @@
+@@ -2736,6 +2770,7 @@
  #define __UINT64_FMTx__ "llx"
  #define __UINT64_MAX__ 18446744073709551615ULL
  #define __UINT64_TYPE__ long long unsigned int
@@ -345,7 +347,7 @@ index 234ad3c..4236935 100644
  #define __UINT8_C_SUFFIX__ 
  #define __UINT8_FMTX__ "hhX"
  #define __UINT8_FMTo__ "hho"
-@@ -2743,6 +2777,7 @@
+@@ -2743,6 +2778,7 @@
  #define __UINT8_FMTx__ "hhx"
  #define __UINT8_MAX__ 255
  #define __UINT8_TYPE__ unsigned char
@@ -353,7 +355,7 @@ index 234ad3c..4236935 100644
  #define __UINTMAX_C_SUFFIX__ ULL
  #define __UINTMAX_FMTX__ "llX"
  #define __UINTMAX_FMTo__ "llo"
-@@ -2963,9 +2998,11 @@
+@@ -2963,9 +2999,11 @@
  #define __WASI_WHENCE_END (UINT8_C(2))
  #define __WASI_WHENCE_SET (UINT8_C(0))
  #define __WCHAR_MAX__ 2147483647
@@ -365,7 +367,7 @@ index 234ad3c..4236935 100644
  #define __WINT_TYPE__ int
  #define __WINT_WIDTH__ 32
  #define __WORDSIZE 64
-@@ -2988,7 +3025,7 @@
+@@ -2988,7 +3026,7 @@
  #define __tg_real_remquo(x,y,z) (__RETCAST_2(x, y)( __FLT(x) && __FLT(y) ? remquof(x, y, z) : __LDBL((x)+(y)) ? remquol(x, y, z) : remquo(x, y, z) ))
  #define __tm_gmtoff tm_gmtoff
  #define __tm_zone tm_zone
@@ -374,7 +376,7 @@ index 234ad3c..4236935 100644
  #define __wasi__ 1
  #define __wasi_api_h 
  #define __wasi_libc_environ_h 
-@@ -3057,10 +3094,16 @@
+@@ -3057,10 +3095,16 @@
  #define __wasilibc___typedef_suseconds_t_h 
  #define __wasilibc___typedef_time_t_h 
  #define __wasilibc___typedef_uid_t_h 
