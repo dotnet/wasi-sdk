@@ -1,7 +1,7 @@
 [submodule "src/llvm-project"]
 	path = src/llvm-project
 	url = https://github.com/dotnet/llvm-project
-	branch = dotnet/llvm-project
+	branch = dotnet/release/8.0
 [submodule "src/wasi-libc"]
 	path = src/wasi-libc
 	url = https://github.com/WebAssembly/wasi-libc
