@@ -17,10 +17,6 @@
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>66b75e61d883abd9e3af86a811c3809a8d9142ca</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Workloads" Version="11.0.0-beta.26456.1">
-      <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>66b75e61d883abd9e3af86a811c3809a8d9142ca</Sha>
-    </Dependency>
   </ToolsetDependencies>
   <ProductDependencies>
     <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Mono.LLVM.Wasm.A.Transport" Version="23.1.0-alpha.1.26451.1">

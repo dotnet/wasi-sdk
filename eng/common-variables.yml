@@ -3,10 +3,6 @@ variables:
   # Cannot use key:value syntax in root defined variables
   - name: _TeamName
     value: DotNetCore
-  - name: _DotNetArtifactsCategory
-    value: .NETCore
-  - name: _DotNetValidationArtifactsCategory
-    value: .NETCore
   - name: _InternalBuildArgs
     value: ''
   - name: _BuildConfig
@@ -17,5 +13,4 @@ variables:
       value: real
     - name: _InternalBuildArgs
       value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName)
-        /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
         /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
