@@ -92,7 +92,7 @@ stages:
               assetManifestPlatform: arm64
               archflag: /p:ArchGroup=arm64 /p:TargetArchitecture=arm64
         pool:
-          vmImage: macos-14
+          vmImage: macos-15
         preSteps:
         - checkout: self
           submodules: recursive
