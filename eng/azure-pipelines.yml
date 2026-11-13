@@ -150,7 +150,7 @@ extends:
             timeoutInMinutes: 480
             pool:
               name: Azure Pipelines
-              image: macos-14
+              image: macos-15
               os: macOS
             preSteps:
             - checkout: self
@@ -172,7 +172,7 @@ extends:
             timeoutInMinutes: 480
             pool:
               name: Azure Pipelines
-              image: macos-14
+              image: macos-15
               os: macOS
             preSteps:
             - checkout: self
