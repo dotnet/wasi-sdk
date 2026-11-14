@@ -37,8 +37,8 @@ extends:
         image: 1es-windows-2022
         os: windows
     containers:
-      mariner20crossamd64:
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
+      crossamd64:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net12.0-cross-amd64
     stages:
     - stage: build
       displayName: Build
@@ -60,7 +60,7 @@ extends:
               name: $(DncEngInternalBuildPool)
               image: build.azurelinux.3.amd64
               os: linux
-            container: mariner20crossamd64
+            container: crossamd64
             preSteps:
             - checkout: self
               submodules: recursive
@@ -83,7 +83,7 @@ extends:
               name: $(DncEngInternalBuildPool)
               image: build.azurelinux.3.amd64
               os: linux
-            container: mariner20crossamd64
+            container: crossamd64
             preSteps:
             - checkout: self
               submodules: recursive
@@ -106,7 +106,7 @@ extends:
               name: $(DncEngInternalBuildPool)
               image: build.azurelinux.3.amd64
               os: linux
-            container: mariner20crossamd64
+            container: crossamd64
             preSteps:
             - checkout: self
               submodules: recursive
@@ -129,7 +129,7 @@ extends:
               name: $(DncEngInternalBuildPool)
               image: build.azurelinux.3.amd64
               os: linux
-            container: mariner20crossamd64
+            container: crossamd64
             preSteps:
             - checkout: self
               submodules: recursive
