@@ -41,22 +41,22 @@ stages:
             x64:
               assetManifestOS: linux
               assetManifestPlatform: x64
-              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net12.0-cross-amd64
               archflag: /p:ArchGroup=x64 /p:TargetArchitecture=x64
             arm64:
               assetManifestOS: linux
               assetManifestPlatform: arm64
-              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net12.0-cross-amd64
               archflag: /p:ArchGroup=arm64 /p:TargetArchitecture=arm64
             x64_musl:
               assetManifestOS: linux-musl
               assetManifestPlatform: x64
-              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net12.0-cross-amd64
               archflag: /p:ArchGroup=x64 /p:TargetArchitecture=x64
             arm64_musl:
               assetManifestOS: linux-musl
               assetManifestPlatform: arm64
-              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net12.0-cross-amd64
               archflag: /p:ArchGroup=arm64 /p:TargetArchitecture=arm64
         pool:
           name: $(DncEngPublicBuildPool)
